@@ -1,0 +1,4953 @@
+:root {
+      --bg: #080a0d;
+      --bg-soft: #101820;
+      --purple: #7bd4f1;
+      --purple-light: #bdefff;
+      --ink: #f4fbff;
+      --muted: #9ab3bf;
+      --panel: #0d161d;
+      --panel-2: #15232d;
+      --border: rgba(184, 235, 250, .16);
+      --accent: #69c7e5;
+      --accent-bright: #8fdbf2;
+      --accent-soft: #bdefff;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--ink);
+      background:
+         radial-gradient(ellipse at 50% 5%, rgba(105, 199, 229, .18), transparent 34rem),
+         linear-gradient(135deg, #0a1820 0%, #04090d 52%, #000000 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, select { font: inherit; }
+    button { border: 0; cursor: pointer; }
+
+    .page {
+      position: relative;
+      height: 100vh;
+      min-height: 650px;
+      isolation: isolate;
+    }
+    .page:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      opacity: .23;
+      background-image:
+         linear-gradient(rgba(8,38,52,.10) 1px, transparent 1px),
+         linear-gradient(90deg, rgba(8,38,52,.10) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: linear-gradient(to bottom, black, transparent 82%);
+    }
+    .page:after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 900px;
+      height: 550px;
+      left: 50%;
+      top: 28%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse, rgba(105, 199, 229, .14), transparent 70%);
+      pointer-events: none;
+    }
+
+    .topbar {
+      position: relative;
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 34px;
+      direction: ltr;
+      z-index: 5;
+    }
+    .top-left, .top-right { display: flex; align-items: center; gap: 30px; }
+    .mute {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      color: #bdefff;
+      background: transparent;
+      padding: 0;
+      border: 0;
+      outline: none;
+      border-radius: 6px;
+      -webkit-tap-highlight-color: transparent;
+      opacity: .85;
+      transition: .2s ease;
+    }
+    .mute:hover { color: #fff; background: rgba(105,199,229,.18); transform: scale(1.08); }
+    .sound-icon { width: 20px; height: 20px; display: block; }
+    .sound-icon svg { width: 100%; height: 100%; display: block; }
+    .sound-off { display: none; }
+    .mute.muted .sound-on { display: none; }
+    .mute.muted .sound-off { display: block; }
+    .account-zone { position: relative; direction: rtl; }
+    .account-button {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: transparent;
+      color: #bdefff;
+      padding: 2px 0;
+      border-radius: 9px;
+      transition: .2s ease;
+    }
+    .account-button:hover { color: #fff; transform: translateY(-1px); }
+    .account-avatar {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: #ebe5f5;
+      border: 1px solid rgba(189,239,255,.42);
+      border-radius: 8px;
+      background: linear-gradient(145deg, #1b3f4e, #05080a);
+      box-shadow: inset 0 1px rgba(255,255,255,.18), 0 5px 14px rgba(0,0,0,.28);
+      font-size: 18px;
+    }
+    .online-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(9,49,64,.28);
+      border-radius: 30px;
+      padding: 9px 15px;
+      color: #bdefff;
+      font-size: 13px;
+      background: rgba(105,199,229,.14);
+    }
+    .online-pill svg { width: 17px; height: 17px; opacity: .8; }
+    .store {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #bdefff;
+      background: transparent;
+      font-size: 15px;
+      padding: 8px 1px;
+      transition: .2s;
+    }
+    .store:hover { color: white; }
+    .store-icon { font-size: 23px; opacity: .75; }
+    .account-menu {
+      position: absolute;
+      top: calc(100% + 11px);
+      right: 0;
+      width: 196px;
+      padding: 8px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-7px) scale(.98);
+      transform-origin: top right;
+      background: rgba(9,15,20,.98);
+      border: 1px solid rgba(143,219,242,.24);
+      border-radius: 11px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.55), inset 0 1px rgba(255,255,255,.05);
+      transition: .2s ease;
+      z-index: 100;
+    }
+    .account-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+    .account-menu button {
+      width: 100%;
+      display: block;
+      text-align: right;
+      padding: 11px 12px;
+      color: #d7f5ff;
+      background: transparent;
+      border-radius: 7px;
+      font-size: 11px;
+      transition: .18s ease;
+    }
+    .account-menu button + button { margin-top: 2px; }
+    .account-menu button:hover { background: #153442; color: white; padding-right: 16px; }
+
+    .hero {
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      width: min(620px, 92vw);
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .dice-logo {
+      position: relative;
+      width: 108px;
+      height: 108px;
+      margin: 0 auto 21px;
+      transform: rotate(25deg);
+      perspective: 700px;
+      filter: drop-shadow(0 15px 12px rgba(0,0,0,.35));
+      animation: float 5s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: rotate(25deg) translateY(0); } 50% { transform: rotate(22deg) translateY(-6px); } }
+    .cube {
+      position: absolute;
+      width: 76px;
+      height: 76px;
+      inset: 16px;
+      transform-style: preserve-3d;
+      transform: rotateX(-21deg) rotateY(-31deg) rotateZ(3deg);
+    }
+    .cube-face {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      align-items: center;
+      justify-items: center;
+      padding: 13px;
+      border: 1px solid rgba(121,115,132,.28);
+      border-radius: 17px;
+      backface-visibility: hidden;
+      box-shadow: inset 4px 4px 8px rgba(255,255,255,.78), inset -8px -10px 14px rgba(68,61,78,.18);
+    }
+    .cube-face.front {
+      background: linear-gradient(145deg, #ffffff 0%, #f3f1f6 58%, #d5d3db 100%);
+      transform: translateZ(38px);
+    }
+    .cube-face.top {
+      background: linear-gradient(145deg, #ffffff 0%, #f0eef4 65%, #c9c7d0 100%);
+      transform: rotateX(90deg) translateZ(38px);
+    }
+    .cube-face.right {
+      background: linear-gradient(145deg, #e6e4ea 0%, #c8c6cf 55%, #aaa8b3 100%);
+      transform: rotateY(90deg) translateZ(38px);
+    }
+    .pip {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #48434e 0 12%, #201d26 48%, #111016 100%);
+      box-shadow: inset 1px 1px 2px rgba(255,255,255,.18), 0 1px 2px rgba(0,0,0,.34);
+    }
+    .p1 { grid-area: 1 / 1; }
+    .p2 { grid-area: 1 / 2; }
+    .p3 { grid-area: 1 / 3; }
+    .p4 { grid-area: 2 / 1; }
+    .p5 { grid-area: 2 / 2; }
+    .p6 { grid-area: 2 / 3; }
+    .p7 { grid-area: 3 / 1; }
+    .p8 { grid-area: 3 / 2; }
+    .p9 { grid-area: 3 / 3; }
+    .cube-face.right .pip,
+    .cube-face.top .pip {
+      width: 10px;
+      height: 10px;
+    }
+    .title-frame {
+      position: relative;
+      display: inline-block;
+      margin: 14px auto 0;
+      padding: 20px 42px 22px;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(20,42,54,.92), rgba(7,18,26,.96));
+      border: 1px solid rgba(143,219,242,.22);
+      box-shadow:
+        0 18px 50px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.06),
+        inset 0 0 40px rgba(143,219,242,.06);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      overflow: hidden;
+    }
+    /* glowing gradient border sweep around the frame */
+    .title-frame::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 22px;
+      padding: 1.5px;
+      background: linear-gradient(135deg,
+        rgba(143,219,242,.85), rgba(143,219,242,.06) 30%,
+        rgba(143,219,242,.06) 70%, rgba(143,219,242,.85));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+    }
+    /* soft glow behind the badge */
+    .title-frame::after {
+      content: "";
+      position: absolute;
+      inset: 18% 12%;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(143,219,242,.28), transparent);
+      filter: blur(18px);
+      pointer-events: none;
+    }
+    .logo-title {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      direction: rtl;
+      font-size: clamp(34px, 5.2vw, 53px);
+      line-height: .98;
+      letter-spacing: -1.8px;
+      font-weight: 900;
+      color: #f4fbff;
+      text-shadow: 0 3px 18px rgba(0,0,0,.2);
+    }
+    .logo-title span {
+      color: #8fdbf2;
+      background: linear-gradient(180deg,#d9f6ff,#6ec4e6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 10px rgba(110,196,230,.35));
+    }
+    /* corner brackets */
+    .tf-corner {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #8fdbf2;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .tf-tl { top: 7px; left: 7px; border-right: 0; border-bottom: 0; border-top-left-radius: 8px; }
+    .tf-tr { top: 7px; right: 7px; border-left: 0; border-bottom: 0; border-top-right-radius: 8px; }
+    .tf-bl { bottom: 7px; left: 7px; border-right: 0; border-top: 0; border-bottom-left-radius: 8px; }
+    .tf-br { bottom: 7px; right: 7px; border-left: 0; border-top: 0; border-bottom-right-radius: 8px; }
+    /* floating sparkles */
+    .tf-spark {
+      position: absolute;
+      color: #8fdbf2;
+      text-shadow: 0 0 10px rgba(143,219,242,.9);
+      pointer-events: none;
+      animation: tfTwinkle 2.6s ease-in-out infinite;
+    }
+    .tf-s1 { top: -6px; left: 6%;  font-size: 15px; }
+    .tf-s2 { bottom: -7px; right: 8%; font-size: 13px; animation-delay: .8s; }
+    .tf-s3 { top: 40%; right: -8px; font-size: 11px; animation-delay: 1.5s; }
+    @keyframes tfTwinkle {
+      0%, 100% { opacity: .25; transform: scale(.7); }
+      50%      { opacity: 1;   transform: scale(1.15); }
+    }
+    .tagline {
+      margin: 7px 0 0;
+      color: #8fdbf2;
+      direction: rtl;
+      font-size: 14px;
+      letter-spacing: .1px;
+    }
+    .guest-play {
+      width: min(280px, 86vw);
+      margin: 22px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .nickname-input {
+      width: 100%;
+      height: 46px;
+      padding: 0 16px;
+      border: 1px solid rgba(189,239,255,.16);
+      border-radius: 12px;
+      background: rgba(8, 22, 30, .9);
+      color: #f4fbff;
+      text-align: center;
+      font-size: 14px;
+      outline: none;
+      direction: rtl;
+    }
+    .nickname-input::placeholder { color: #7a94a2; }
+    .nickname-input:focus {
+      border-color: rgba(143,219,242,.55);
+      box-shadow: 0 0 0 3px rgba(105,199,229,.14);
+    }
+    .play {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 13px;
+      width: 100%;
+      height: 50px;
+      margin: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #071017, #000);
+      border: 1px solid rgba(189,239,255,.72);
+      box-shadow: 0 9px 25px rgba(8, 39, 50, .28), inset 0 1px rgba(255,255,255,.16);
+      color: #fff;
+      font-size: 19px;
+      font-weight: 800;
+      transition: transform .2s, box-shadow .2s, opacity .2s;
+    }
+    .play:hover:not(:disabled) { transform: translateY(-3px); border-color:#d8f7ff; box-shadow: 0 14px 31px rgba(8,39,50,.4), inset 0 1px rgba(255,255,255,.2); }
+    .play:disabled {
+      opacity: .38;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      pointer-events: none;
+    }
+    .play-arrow { font-size: 26px; line-height: 1; font-weight: 300; opacity: .75; }
+    .quick-actions { display: flex; justify-content: center; gap: 8px; margin-top: 21px; }
+    .quick-actions button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 36px;
+      padding: 0 15px;
+      color: #f0eaf8;
+      background: linear-gradient(135deg, #162f3a, #05090c);
+      border: 1px solid rgba(189,239,255,.32);
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: .2s;
+    }
+    .quick-actions button:hover { background: linear-gradient(135deg, #24566b, #071017); transform: translateY(-1px); }
+    .quick-actions .key { display:grid; place-items:center; color: #bdefff; }
+    .quick-actions .key svg { width:14px; height:14px; display:block; }
+
+    .decorations { position: absolute; inset: auto 0 0; height: 210px; pointer-events: none; opacity: .35; overflow: hidden; }
+    .decor {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      color: #6aaec4;
+      font-size: 35px;
+      filter: saturate(.65);
+      transform: rotate(var(--r));
+      text-shadow: 0 4px 12px #000;
+    }
+    .d1 { left: 7%; bottom: 84px; --r:-19deg; font-size: 26px; }
+    .d2 { left: 18%; bottom: 39px; --r:-10deg; font-size: 37px; }
+    .d3 { left: 28%; bottom: 71px; --r:12deg; font-size: 33px; }
+    .d4 { left: 38%; bottom: 20px; --r:-20deg; font-size: 52px; color:#4ea8c8; opacity:.75; }
+    .d5 { left: 47%; bottom: 74px; --r:4deg; font-size: 65px; color:#bdefff; opacity:1; }
+    .d6 { left: 54%; bottom: 18px; --r:8deg; font-size: 66px; color:#071017; opacity:1; }
+    .d7 { left: 66%; bottom: 53px; --r:-12deg; font-size: 40px; }
+    .d8 { left: 76%; bottom: 82px; --r:15deg; font-size: 34px; }
+    .d9 { left: 87%; bottom: 32px; --r:17deg; font-size: 35px; }
+    .d10 { left: 96%; bottom: 92px; --r:-8deg; font-size: 30px; }
+    .discord {
+      position: absolute;
+      left: 23px;
+      bottom: 16px;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      padding: 7px;
+      border-radius: 9px;
+      color: #8fdbf2;
+      background: transparent;
+      opacity: .9;
+    }
+    .discord:hover { color: #071017; background: rgba(255,255,255,.28); }
+    .discord svg { width: 100%; height: 100%; display: block; }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0b1116;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--purple);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: .3s ease;
+      pointer-events: none;
+      font-size: 13px;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* Auth Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(6, 3, 12, .76);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: .25s ease;
+    }
+    .modal-backdrop.show { opacity: 1; visibility: visible; }
+    .auth-modal {
+      position: relative;
+      width: min(410px, 100%);
+      padding: 27px;
+      border: 1px solid rgba(189,239,255,.24);
+      border-radius: 13px;
+      background: linear-gradient(145deg, #132832, #05080a);
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+      transform: translateY(14px) scale(.98);
+      transition: .25s ease;
+      direction: rtl;
+    }
+    .modal-backdrop.show .auth-modal { transform: translateY(0) scale(1); }
+    .close-modal {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      color: #9e8daf;
+      background: transparent;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .close-modal:hover { color: white; background: rgba(255,255,255,.08); }
+    .auth-mark { width: 36px; height: 36px; margin: 0 auto 12px; border-radius: 10px; color:#061017; background: linear-gradient(135deg,#d8f7ff,#69c7e5); display:grid; place-items:center; font-size:18px; transform:rotate(12deg); }
+    .auth-modal h2 { margin: 0; text-align:center; font-size:20px; }
+    .auth-subtitle { text-align:center; color:var(--muted); font-size:11px; margin:7px 0 20px; }
+    .auth-tabs { display:flex; gap:4px; margin-bottom:16px; padding:3px; border-radius:7px; background:#160e23; }
+    .auth-tabs button { flex:1; padding:8px; border-radius:5px; color:#998aa9; background:transparent; font-size:11px; }
+    .auth-tabs button.active { color:#061017; background:#9be2f7; font-weight:bold; }
+    .providers { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .provider { display:flex; align-items:center; justify-content:center; gap:7px; padding:10px; border-radius:7px; border:1px solid var(--border); color:white; background:#312044; font-size:11px; transition:.2s; }
+    .provider:hover { background:#43295b; border-color:rgba(205,165,255,.3); }
+    .provider span { width:18px; height:18px; display:grid; place-items:center; border-radius:4px; font-weight:900; font-size:12px; }
+    .google span { color:#4285f4; background:white; } .discord-btn span { background:#5865f2; }
+    .divider { display:flex; align-items:center; gap:10px; color:#766983; font-size:10px; margin:17px 0 12px; }
+    .divider:before, .divider:after { content:""; flex:1; height:1px; background:var(--border); }
+    .field { display:block; margin-bottom:10px; color:#afa1bd; font-size:10px; text-align:right; }
+    .field input { width:100%; margin-top:6px; padding:11px; outline:none; color:white; background:#140c21; border:1px solid rgba(255,255,255,.1); border-radius:6px; direction:ltr; text-align:left; font-size:12px; }
+    .field input:focus { border-color:#8ee0fa; box-shadow:0 0 0 3px rgba(142,224,250,.14); }
+    .auth-submit { width:100%; padding:11px; border-radius:6px; color:#061017; background:linear-gradient(135deg,#d8f7ff,#69c7e5); font-size:12px; font-weight:800; margin-top:10px; }
+    .auth-submit:hover { filter:brightness(1.12); }
+    .guest-submit { width:100%; padding:10px; margin-top:9px; border-radius:6px; color:#bdefff; background:transparent; border:1px solid rgba(189,239,255,.40); font-size:11px; font-weight:700; transition:.2s; }
+    .guest-submit:hover { color:white; background:rgba(105,199,229,.14); border-color:rgba(216,247,255,.72); }
+
+    /* ========== LOBBY SCREEN (Richup-style) ========== */
+    .lobby-screen {
+      --lobby-chrome: 20px; /* screen padding only — the old top bar is gone */
+      display: none;
+      height: 100vh;
+      padding: 8px 14px 12px;
+      background:
+         radial-gradient(ellipse at 50% 0%, rgba(105, 199, 229, .14), transparent 42rem),
+         linear-gradient(160deg, #0a1520 0%, #050a10 45%, #020508 100%);
+    }
+    .lobby-screen.show { display: flex; flex-direction: column; }
+
+        .lobby-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+      min-height: 30px;
+    }
+    .lobby-brand {
+      position: relative;
+      direction: rtl;
+      unicode-bidi: isolate;
+      margin-inline-start: auto;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0;
+      color: #f4fbff;
+      display: block;
+      text-align: center;
+      white-space: nowrap;
+      padding: 8px 18px 9px;
+      border-radius: 13px;
+      background: linear-gradient(180deg, rgba(20,42,54,.92), rgba(7,18,26,.96));
+      border: 1px solid rgba(143,219,242,.22);
+      box-shadow:
+        0 10px 26px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.06),
+        inset 0 0 24px rgba(143,219,242,.06);
+      line-height: 1;
+    }
+    .lobby-brand::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 14px;
+      padding: 1.4px;
+      background: linear-gradient(135deg,
+        rgba(143,219,242,.9), rgba(143,219,242,.06) 30%,
+        rgba(143,219,242,.06) 70%, rgba(143,219,242,.9));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+    }
+    .lobby-brand span {
+      color: #8fdbf2;
+      background: linear-gradient(180deg,#d9f6ff,#6ec4e6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(110,196,230,.35));
+    }
+    .lobby-exit {
+      margin-inline-end: auto;
+    }
+
+    .lobby-tool {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      color: #8aa8b8;
+      background: transparent;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: .15s;
+    }
+    .lobby-tool:hover { color: #fff; background: rgba(105,199,229,.15); }
+
+    .lobby-grid {
+      width: 100%;
+      max-width: 1760px;
+      min-height: 0;
+      height: calc(100vh - var(--lobby-chrome));
+      margin: 0 auto;
+      display: grid;
+      /* Left (chat) & right (settings) panels are wider to fill the empty
+         space that the square board leaves on each side. */
+      grid-template-columns: minmax(240px, 22%) minmax(0, 1fr) minmax(300px, 29%);
+      gap: 10px;
+      direction: ltr;
+    }
+
+    /* Left column */
+    .lobby-side { min-width: 0; min-height: 0; }
+    .lobby-left-stack, .lobby-right-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+      min-height: 0;
+    }
+    .lobby-card {
+      background: linear-gradient(160deg, rgba(14, 28, 38, .96), rgba(6, 12, 18, .98));
+      border: 1px solid rgba(189,239,255,.10);
+      border-radius: 10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.22);
+    }
+
+    .lobby-share { padding: 14px; }
+    .lobby-share-title {
+      color: #bdefff;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .lobby-share-row {
+      display: flex;
+      gap: 6px;
+      direction: ltr;
+    }
+    .lobby-share-row input {
+      min-width: 0;
+      width: 100%;
+      color: #d8f0f8;
+      background: #071017;
+      border: 1px solid rgba(189,239,255,.14);
+      border-radius: 6px;
+      padding: 9px 10px;
+      font-size: 11px;
+      outline: none;
+    }
+    .lobby-copy {
+      border-radius: 6px;
+      color: #061017;
+      background: #d8f7ff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 0 14px;
+      white-space: nowrap;
+      transition: .15s;
+    }
+    .lobby-copy:hover { background: #fff; }
+        .lobby-chat {
+      flex: 1 1 auto;
+      min-height: 0;
+      position: relative;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+    .lobby-chat-title {
+      text-align: center;
+      color: #bdefff;
+      font-size: 12px;
+      font-weight: 600;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(189,239,255,.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .lobby-chat-messages {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      margin: 10px 0 42px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 11px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(143,219,242,.28) transparent;
+    }
+    .chat-msg {
+      background: rgba(255,255,255,.04);
+      padding: 7px 10px;
+      border-radius: 6px;
+      line-height: 1.35;
+    }
+    .chat-msg strong { color: #8fdbf2; }
+    .lobby-chat-empty {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 8px;
+      color: #6a7f8c;
+      font-size: 11px;
+    }
+    .lobby-chat-empty b { opacity: .45; font-size: 22px; }
+    .lobby-chat-form {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      gap: 6px;
+    }
+    .lobby-chat-form input {
+      width: 100%;
+      min-width: 0;
+      color: white;
+      background: #071017;
+      border: 1px solid rgba(189,239,255,.14);
+      border-radius: 20px;
+      padding: 9px 14px;
+      font-size: 11px;
+      outline: none;
+    }
+    .lobby-chat-form input:focus { border-color: rgba(143,219,242,.4); }
+    .lobby-chat-form button {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      color: #8fdbf2;
+      background: rgba(105,199,229,.12);
+      font-size: 14px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .lobby-chat-form button:hover { background: rgba(105,199,229,.25); color: #fff; }
+
+    /* Center board */
+    .lobby-middle {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lobby-board-wrap {
+      /* Fill the whole middle column but center a *square* board inside it.
+         (Height = available viewport height, width = full column width.)
+         container-type:size lets the board read cqmin = min(avail width, avail
+         height) so it stays perfectly square at any viewport. */
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      container-type: size;
+    }
+    .lobby-board {
+      position: relative;
+      display: grid;
+      /* Corners & ring are 1.5295x thicker than inner tiles (matching the
+         reference board: corner 77.56 / tile 50.72 = 1.5295) */
+      grid-template-columns: minmax(0, 1.5295fr) repeat(11, minmax(0, 1fr)) minmax(0, 1.5295fr);
+      grid-template-rows: minmax(0, 1.5295fr) repeat(11, minmax(0, 1fr)) minmax(0, 1.5295fr);
+      gap: 3px;
+      /* Square board capped at 745×745 (reference main size): the side length
+         is min(available width, available height, 745px) so it never distorts. */
+      width: min(100cqmin, 745px);
+      max-width: 745px;
+      aspect-ratio: 1 / 1;
+      padding: 4px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #04080c;
+      border: 1px solid rgba(189,239,255,.12);
+      box-shadow: inset 0 0 40px rgba(0,0,0,.4);
+    }
+
+    .room-tile {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 2px;
+      overflow: hidden;
+      border-radius: 4px;
+      background: #0e1c26;
+      border: 1px solid rgba(189,239,255,.08);
+      color: #e8f4f8;
+      text-align: center;
+      direction: ltr;
+      gap: 2px;
+    }
+    .room-tile .rt-price {
+      font-size: clamp(7px, 0.78vw, 11px);
+      font-weight: 700;
+      color: #a8c8d4;
+      line-height: 1;
+    }
+    .room-tile .rt-icon {
+      font-size: clamp(12px, 1.4vw, 20px);
+      line-height: 1;
+    }
+    .room-tile .rt-name {
+      max-width: 100%;
+      font-size: clamp(7px, 0.72vw, 10px);
+      font-weight: 700;
+      line-height: 1.1;
+      white-space: normal;
+      /* Longer-than-tile names paint over the tile gaps (reference style) */
+      overflow: visible;
+      position: relative;
+      z-index: 6;
+    }
+
+    .room-tile.corner {
+      background: linear-gradient(145deg, #1a3a4a, #071018);
+      justify-content: center;
+      gap: 3px;
+    }
+    .room-tile.corner .rt-name {
+      color: #fff;
+      font-size: clamp(8px, 0.9vw, 12px);
+      font-weight: 800;
+      white-space: normal;
+    }
+    .room-tile.corner .rt-icon { font-size: clamp(15px, 1.9vw, 27px); }
+    .room-tile.special {
+      background: linear-gradient(160deg, #152a36, #0a141c);
+    }
+
+    /* Property tiles tinted with their group colour (reference style) */
+    .room-tile.has-bar {
+      background: #152433;
+      background: linear-gradient(150deg,
+        color-mix(in srgb, var(--tile-color, #61b6d7) 38%, #111e2a),
+        color-mix(in srgb, var(--tile-color, #61b6d7) 18%, #070d13));
+    }
+
+    /* Special tile tints (match the reference board) */
+    .room-tile.tint-treasure { background: linear-gradient(160deg, #472f70, #1a1330); }
+    .room-tile.tint-surprise { background: linear-gradient(160deg, #55296e, #201330); }
+    .room-tile.tint-deathvalley { background: radial-gradient(circle at 50% 35%, #44384f 0%, #211827 42%, #09070c 100%); border-color: rgba(226,205,239,.18); }
+    .room-tile.tint-deathvalley .rt-icon { font-size: clamp(20px, 2.15vw, 32px); filter: drop-shadow(0 0 9px rgba(219,190,236,.28)); }
+    .room-tile.tint-deathvalley .rt-name { color:#e7d9ef; font-size:clamp(6.5px,.60vw,8.5px); }
+    .room-tile.tint-airport { background: linear-gradient(160deg, #2a5270, #0e1e2c); }
+    .room-tile.tint-company { background: linear-gradient(160deg, #1f4670, #0c1c2c); }
+    .room-tile.tint-tax { background: linear-gradient(160deg, #31404f, #131a21); }
+    .room-tile.tint-treasure .rt-icon,
+    .room-tile.tint-airport .rt-icon,
+    .room-tile.tint-company .rt-icon { font-size: clamp(15px, 1.7vw, 24px); }
+
+    /* Round country-code chips — identical rendering on every OS */
+    .room-tile .rt-flag {
+      width: clamp(15px, 1.3vw, 20px);
+      height: clamp(15px, 1.3vw, 20px);
+      min-width: 0;
+      padding: 0;
+      border-radius: 50%;
+      /* الخانات الجانبية عندها writing-mode: vertical-rl، واللي كان كيخلي
+         الصورة تتحسب 30px عرض داخل دائرة 20px وتتقص من اليسار (الصفحة RTL).
+         كنرجعو الاتجاه عادي جوّا الشارة باش الدائرة تبقى مربعة والعلم فالوسط. */
+      writing-mode: horizontal-tb;
+      direction: ltr;
+      flex: 0 0 auto;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      font-size: clamp(7px, 0.62vw, 9px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: 0;
+      text-indent: 1px; /* optical centre for 2-letter ISO codes */
+      color: #eaf6fb;
+      background: rgba(5, 10, 16, .78);
+      box-shadow: inset 0 0 0 1.2px var(--tile-color, #61b6d7), 0 1px 3px rgba(0,0,0,.5);
+    }
+    .room-tile .rt-img {
+      padding: 0;
+      overflow: hidden;
+      background: #fff;
+      position: relative;
+    }
+    /* absolute + inset:0 = الصورة كتاخد قياس الدائرة بالضبط فأي اتجاه كتابة */
+    .room-tile .rt-img img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+    }
+    .room-tile .color-bar {
+      position: absolute;
+      background: var(--tile-color, #61b6d7);
+    }
+
+    /* --- Color strips face OUTWARD, matching the reference board --- */
+    .room-tile.edge-top .color-bar { top: 0; left: 0; right: 0; height: 5px; }
+    .room-tile.edge-bottom .color-bar { bottom: 0; left: 0; right: 0; height: 5px; }
+    .room-tile.edge-left .color-bar { left: 0; top: 0; bottom: 0; width: 5px; }
+    .room-tile.edge-right .color-bar { right: 0; top: 0; bottom: 0; width: 5px; }
+    .room-tile.edge-top.has-bar { padding-top: 9px; }
+    .room-tile.edge-bottom.has-bar { padding-bottom: 9px; }
+    .room-tile.edge-left.has-bar { padding-left: 10px; }
+    .room-tile.edge-right.has-bar { padding-right: 10px; }
+
+    /* Content order on every tile runs outer → inner: price, name, flag.
+       (axis direction already differs per edge; the bottom row inverts) */
+    .room-tile.edge-top .rt-price { order: 0; }
+    .room-tile.edge-top .rt-name { order: 1; }
+    .room-tile.edge-top .rt-flag { order: 2; }
+    .room-tile.edge-bottom .rt-flag { order: 0; }
+    .room-tile.edge-bottom .rt-name { order: 1; }
+    .room-tile.edge-bottom .rt-price { order: 2; }
+
+    /* Side tiles: price pinned to the outer edge, flag chip to the inner
+       edge, and the name gets the full tile height in the middle so
+       two-word names can wrap without squeezing (reference style) */
+    .room-tile.edge-left .rt-price { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); }
+    .room-tile.edge-right .rt-price { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); }
+    .room-tile.edge-left .rt-flag { position: absolute; right: 7px; top: 50%; transform: translateY(-50%); }
+    .room-tile.edge-right .rt-flag { position: absolute; left: 7px; top: 50%; transform: translateY(-50%); }
+
+    /* Sideways text for the two side columns so long names stay readable */
+    .room-tile.edge-left,
+    .room-tile.edge-right {
+      writing-mode: vertical-rl;
+      gap: 3px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+    /* Mirror the reference: price on the outer edge, name in the middle */
+    .room-tile.edge-left { flex-direction: column-reverse; }
+    .room-tile.edge-left .rt-name,
+    .room-tile.edge-right .rt-name {
+      max-width: none;
+      max-height: none;
+      overflow: visible;
+      position: relative;
+      z-index: 6;
+      font-size: clamp(8px, 0.76vw, 10px);
+    }
+    /* Shrink-to-fit classes for long city names (no clipping in any font) */
+    .room-tile .rt-name.rt-f9 { font-size: clamp(7px, 0.62vw, 8.5px); }
+    .room-tile .rt-name.rt-f8 { font-size: clamp(6.5px, 0.56vw, 8px); }
+    .room-tile.edge-left .rt-price,
+    .room-tile.edge-right .rt-price {
+      font-size: clamp(8px, 0.76vw, 10px);
+    }
+
+    /* Glowing pink surprise mark like the reference board */
+    .rt-q {
+      color: #f47dc9;
+      font-weight: 900;
+      font-size: clamp(18px, 2.1vw, 30px);
+      line-height: 1;
+      text-shadow: 0 0 14px rgba(244, 125, 201, .45);
+    }
+
+    .lobby-center {
+      grid-column: 2 / 13;
+      grid-row: 2 / 13;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(105,199,229,.12), transparent 55%),
+        #050a10;
+      border: 1px solid rgba(189,239,255,.08);
+      border-radius: 8px;
+      text-align: center;
+      gap: 16px;
+      padding: 12px;
+    }
+    .center-dice {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,.45));
+    }
+    .center-die {
+      width: 84px;
+      height: 84px;
+      background: linear-gradient(145deg, #fff 0%, #f0f0f4 60%, #d8d8e0 100%);
+      border-radius: 14px;
+      box-shadow:
+        inset 3px 3px 6px rgba(255,255,255,.9),
+        inset -5px -6px 10px rgba(0,0,0,.12),
+        0 6px 16px rgba(0,0,0,.34);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      padding: 13px;
+      place-items: center;
+    }
+    .center-die .pip {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #3a3540 0 20%, #1a161e 55%, #0a080c 100%);
+    }
+    .waiting-text {
+      color: #8aa0ae;
+      font-size: 13px;
+      margin: 0;
+    }
+    .start-game {
+      padding: 12px 34px;
+      border-radius: 8px;
+      color: #061017;
+      background: linear-gradient(135deg, #9be2f7, #69c7e5);
+      font-size: 14px;
+      font-weight: 800;
+      transition: .2s;
+      box-shadow: 0 4px 14px rgba(105,199,229,.3);
+    }
+    .start-game:hover {
+      background: linear-gradient(135deg, #d8f7ff, #8fdbf2);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(105,199,229,.4);
+    }
+    .joined-text {
+      color: #6a8090;
+      font-size: 11px;
+      margin: 0;
+    }
+
+    /* Right column */
+    .room-player-card { padding: 12px; }
+    .room-player-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      direction: ltr;
+    }
+    .room-player-avatar {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #061017;
+      background: linear-gradient(135deg, #bdefff, #69c7e5);
+      font-size: 17px;
+      font-weight: 900;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(105,199,229,.25);
+    }
+    .room-player-info {
+      flex: 1;
+      min-width: 0;
+      text-align: left;
+    }
+    .room-player-name {
+      color: #eef6fa;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .room-host {
+      color: #061017;
+      background: linear-gradient(135deg, #f0d060, #e8b840);
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .change-appearance {
+      padding: 7px 12px;
+      color: #bdefff;
+      background: #173744;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: .15s;
+      border: 1px solid rgba(189,239,255,.15);
+    }
+    .change-appearance:hover {
+      color: white;
+      background: #24566b;
+      border-color: rgba(189,239,255,.3);
+    }
+
+    .room-settings {
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: 12px 11px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(143,219,242,.28) transparent;
+    }
+    .lobby-chat-messages::-webkit-scrollbar,
+    .room-settings::-webkit-scrollbar { width: 6px; }
+    .lobby-chat-messages::-webkit-scrollbar-thumb,
+    .room-settings::-webkit-scrollbar-thumb {
+      background: rgba(143,219,242,.24);
+      border-radius: 8px;
+    }
+    .lobby-chat-messages::-webkit-scrollbar-track,
+    .room-settings::-webkit-scrollbar-track { background: transparent; }
+    .room-settings-title {
+      margin: 0 0 12px;
+      color: #c8dce6;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .room-setting {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .room-setting:last-child { border-bottom: 0; }
+    .room-setting-icon {
+      width: 20px;
+      color: #8aa8b8;
+      text-align: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+    .room-setting-copy { flex: 1; min-width: 0; }
+    .room-setting-name {
+      color: #e4f0f6;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .room-setting-name .beta {
+      font-size: 8px;
+      color: #061017;
+      background: #c9a0f0;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 800;
+    }
+    .room-setting-help {
+      color: #6e8592;
+      font-size: 10px;
+      line-height: 1.35;
+      margin-top: 3px;
+    }
+    .room-toggle {
+      width: 36px;
+      height: 20px;
+      padding: 2px;
+      border-radius: 20px;
+      background: #2a3a45;
+      transition: .2s;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .room-toggle:after {
+      content: "";
+      display: block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #7a8f9c;
+      transition: .2s;
+    }
+    .room-toggle.on {
+      background: #69c7e5;
+    }
+    .room-toggle.on:after {
+      transform: translateX(16px);
+      background: white;
+    }
+    .room-select {
+      color: #e7faff;
+      background: #1a3545;
+      border: 1px solid rgba(189,239,255,.12);
+      border-radius: 5px;
+      padding: 5px 8px;
+      font-size: 11px;
+      outline: none;
+      cursor: pointer;
+    }
+    .room-select:hover { border-color: rgba(189,239,255,.3); }
+    .room-link-btn {
+      color: #8fdbf2;
+      background: transparent;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 0;
+      text-align: right;
+      transition: .15s;
+    }
+    .room-link-btn:hover { color: #fff; text-decoration: underline; }
+
+    .settings-section-title {
+      margin: 14px 0 8px;
+      color: #8aa8b8;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+    .settings-section-title:first-of-type { margin-top: 4px; }
+
+    @media (max-width: 1100px) {
+      .lobby-grid {
+        grid-template-columns: minmax(200px, 22%) minmax(0, 1fr) minmax(250px, 27%);
+        gap: 9px;
+      }
+    }
+    @media (max-width: 900px) {
+      .lobby-screen { height: auto; overflow: visible; }
+      .lobby-screen.show { display: block; }
+      .lobby-grid {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        min-height: 0;
+      }
+      .lobby-middle { order: 1; }
+      .lobby-side.left { order: 2; }
+      .lobby-side.right { order: 3; }
+      .lobby-board-wrap { width: min(100%, 520px, 86vh); height: auto; aspect-ratio: 1; }
+      .lobby-chat { min-height: 220px; flex: none; }
+      .room-settings { flex: none; overflow: visible; }
+    }
+    @media (max-width: 650px) {
+      body { overflow-y: auto; }
+      .page { min-height: 720px; height: 100vh; }
+      .topbar { height: 58px; padding: 0 14px; }
+      .top-left { gap: 9px; }
+      .online-pill { display: none; }
+      .store { font-size: 0; gap: 0; }
+      .store-icon { font-size: 16px; }
+      .hero { top: 44%; }
+      .dice-logo { width: 86px; height: 86px; margin-bottom: 17px; }
+      .cube { width: 62px; height: 62px; inset: 12px; }
+      .cube-face.front { transform: translateZ(31px); }
+      .cube-face.top { transform: rotateX(90deg) translateZ(31px); }
+      .cube-face.right { transform: rotateY(90deg) translateZ(31px); }
+      .cube-face { padding: 10px; border-radius: 14px; }
+      .pip { width: 9px; height: 9px; }
+      .logo-title { font-size: 38px; letter-spacing: -2px; }
+      .tagline { font-size: 12px; }
+      .decorations { height: 145px; }
+      .decor { font-size: 24px; }
+      .d4,.d5,.d6 { font-size: 43px; }
+      .d1,.d10 { display: none; }
+      .discord { left: 14px; bottom: 13px; }
+      .lobby-screen { padding: 6px; }
+      .lobby-brand { font-size: 13px; padding: 7px 14px 8px; }
+      .lobby-board-wrap { width: min(100%, 86vh); }
+      .center-die { width: 60px; height: 60px; padding: 9px; border-radius: 11px; }
+      .center-die .pip { width: 8px; height: 8px; }
+    }
+
+/* =========================================================================
+   طبقة اللعب (المحرك) — القطع، الأزرار، لوحة اللاعبين، السجل، البطاقات
+   ========================================================================= */
+
+/* ملي تبدا اللعبة: نخبيو عناصر الانتظار ونبينو عناصر اللعب */
+.game-actions, .game-log, .game-panel { display: none; }
+.lobby-screen.playing .waiting-text,
+.lobby-screen.playing .start-game,
+.lobby-screen.playing .joined-text,
+.lobby-screen.playing .room-player-card,
+.lobby-screen.playing .room-settings { display: none; }
+.lobby-screen.playing .game-actions { display: flex; }
+.lobby-screen.playing .game-log { display: block; }
+.lobby-screen.playing .game-panel { display: block; }
+
+/* ---------- قطع اللاعبين على الخانات ---------- */
+.rt-tokens {
+  position: absolute; inset: 0;
+  display: flex; flex-wrap: wrap;
+  align-content: center; justify-content: center;
+  gap: 2px; pointer-events: none; z-index: 6;
+}
+.g-token {
+  width: clamp(9px, .8vw, 13px); height: clamp(9px, .8vw, 13px);
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.85);
+  box-shadow: 0 2px 5px rgba(0,0,0,.6);
+  transition: transform .18s ease;
+}
+.g-token.active {
+  transform: scale(1.28);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.5), 0 3px 8px rgba(0,0,0,.7);
+}
+
+/* ---------- علامة الملكية والبيوت ---------- */
+.room-tile.owned {
+  box-shadow:
+    inset 0 0 0 2px var(--owner-color),
+    inset 0 0 18px color-mix(in srgb, var(--owner-color) 22%, transparent),
+    0 2px 8px rgba(0,0,0,.52);
+}
+.room-tile.owned::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--owner-color) 86%, white 14%),
+    var(--owner-color));
+  box-shadow: 0 0 9px color-mix(in srgb, var(--owner-color) 62%, transparent);
+}
+.room-tile.owned.edge-top::after {
+  top: 0; left: 8%; right: 8%; height: 12px;
+  border-radius: 0 0 5px 5px;
+}
+.room-tile.owned.edge-bottom::after {
+  bottom: 0; left: 8%; right: 8%; height: 12px;
+  border-radius: 5px 5px 0 0;
+}
+.room-tile.owned.edge-left::after {
+  left: 0; top: 8%; bottom: 8%; width: 16px;
+  border-radius: 0 5px 5px 0;
+}
+.room-tile.owned.edge-right::after {
+  right: 0; top: 8%; bottom: 8%; width: 16px;
+  border-radius: 5px 0 0 5px;
+}
+.room-tile.mortgaged { filter: grayscale(.75) brightness(.72); }
+.rt-houses {
+  position: absolute; top: 2px; left: 50%; transform: translateX(-50%);
+  font-size: clamp(6px, .55vw, 9px); letter-spacing: -1px;
+  z-index: 5; text-shadow: 0 1px 2px #000;
+}
+
+/* ---------- أزرار الدور ---------- */
+.game-actions {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  justify-content: center; margin: 14px 0 6px;
+}
+.g-btn {
+  border: 0; cursor: pointer;
+  padding: 11px 20px; border-radius: 11px;
+  font-family: inherit; font-size: clamp(12px, 1vw, 15px); font-weight: 700;
+  color: #fff; background: linear-gradient(180deg, #7d4bd6, #6435b8);
+  box-shadow: 0 4px 0 #4b2589, 0 6px 14px rgba(0,0,0,.45);
+  transition: transform .12s ease, filter .12s ease;
+}
+.g-btn:hover { filter: brightness(1.12); transform: translateY(-1px); }
+.g-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #4b2589; }
+.g-btn.blue { background: linear-gradient(180deg, #3f8fd8, #2f6db0); box-shadow: 0 4px 0 #21497a, 0 6px 14px rgba(0,0,0,.45); }
+.g-btn.pink { background: linear-gradient(180deg, #e070b8, #c34e9a); box-shadow: 0 4px 0 #8d3570, 0 6px 14px rgba(0,0,0,.45); }
+
+/* ---------- سجل الأحداث ---------- */
+.game-log {
+  max-width: 92%; margin: 4px auto 0;
+  font-size: clamp(10px, .82vw, 13px); line-height: 1.85;
+  text-align: center; color: #cfe3ef; pointer-events: none;
+}
+.g-logline { transition: opacity .3s ease; }
+.g-logline b { color: #fff; margin: 0 4px; }
+.g-logdot {
+  display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  vertical-align: middle; margin-inline-end: 3px;
+  border: 1px solid rgba(255,255,255,.7);
+}
+
+/* ---------- بطاقة وسط الشاشة ---------- */
+.g-card {
+  position: absolute; top: 34%; left: 50%;
+  transform: translate(-50%, -12px) scale(.9);
+  min-width: 190px; max-width: 300px;
+  padding: 14px 30px 14px 16px; border-radius: 12px;
+  font-size: clamp(12px, 1vw, 15px); font-weight: 700; line-height: 1.5;
+  color: #2a1400; background: linear-gradient(160deg, #f7a63b, #e07c22);
+  box-shadow: 0 12px 30px rgba(0,0,0,.6);
+  opacity: 0; pointer-events: none; z-index: 40;
+  transition: opacity .22s ease, transform .22s ease;
+}
+.g-card.show { opacity: 1; transform: translate(-50%, 0) scale(1); pointer-events: auto; }
+.g-card.surprise { background: linear-gradient(160deg, #d76ad0, #9c3ea6); color: #fff; }
+.g-card.win { background: linear-gradient(160deg, #56d38a, #22945c); color: #05240f; }
+.g-card-close {
+  position: absolute; top: 5px; right: 9px;
+  cursor: pointer; font-size: 17px; opacity: .65;
+}
+.g-card-close:hover { opacity: 1; }
+
+/* ---------- اللوحة اليمنى ---------- */
+.game-panel { padding: 12px; }
+.g-players { display: flex; flex-direction: column; gap: 7px; }
+.g-player {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 10px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid transparent;
+  transition: background .2s ease, border-color .2s ease;
+}
+.g-player.turn {
+  background: rgba(125,75,214,.22);
+  border-color: rgba(168,120,255,.65);
+  box-shadow: 0 0 14px rgba(125,75,214,.3);
+}
+.g-player.out { opacity: .38; text-decoration: line-through; }
+.g-avatar {
+  width: 27px; height: 27px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 13px; color: #16202b;
+  border: 1.5px solid rgba(255,255,255,.6);
+}
+.g-pname { flex: 1; font-size: 13px; font-weight: 600; color: #eaf6fb; }
+.g-bot {
+  font-style: normal; font-size: 8.5px; font-weight: 800;
+  background: rgba(255,255,255,.14); color: #bcd6e6;
+  padding: 1px 5px; border-radius: 5px; margin-inline-start: 3px;
+}
+.g-cash { position: relative; font-size: 13px; font-weight: 800; color: #8ef0b4; }
+
+/* أنيميشن +200 / -50 */
+.g-flash {
+  position: absolute; top: -3px; right: 0;
+  font-size: 11px; font-weight: 800;
+  animation: gfloat 1.4s ease-out forwards; pointer-events: none;
+}
+.g-flash.up { color: #6ee7a0; }
+.g-flash.down { color: #ff7b7b; }
+@keyframes gfloat {
+  0%   { opacity: 0; transform: translateY(4px); }
+  22%  { opacity: 1; transform: translateY(-9px); }
+  100% { opacity: 0; transform: translateY(-26px); }
+}
+
+.g-bankrupt {
+  width: 100%; margin: 11px 0 4px; padding: 8px;
+  border: 0; border-radius: 9px; cursor: pointer;
+  font-family: inherit; font-size: 12.5px; font-weight: 700; color: #fff;
+  background: linear-gradient(180deg, #e2564f, #b83a34);
+  box-shadow: 0 3px 0 #7d2723;
+}
+.g-bankrupt:hover { filter: brightness(1.1); }
+
+.g-props-head {
+  margin: 12px 0 7px; padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.09);
+  font-size: 12.5px; font-weight: 700; color: #a9c6d8; text-align: center;
+}
+.g-props { display: flex; flex-direction: column; gap: 4px; max-height: 34vh; overflow-y: auto; }
+.g-prop {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 8px; border-radius: 8px;
+  background: rgba(255,255,255,.04); font-size: 12px; color: #dceaf3;
+}
+.g-propdot { width: 9px; height: 9px; border-radius: 3px; flex: 0 0 auto; }
+.g-propname { flex: 1; }
+.g-mort { font-style: normal; font-size: 9px; color: #ff9d9d; }
+.g-prophouses { font-size: 9px; letter-spacing: -1px; }
+.g-propbtns { display: flex; gap: 3px; }
+.g-propbtns button {
+  width: 20px; height: 20px; padding: 0;
+  border: 0; border-radius: 6px; cursor: pointer;
+  background: rgba(255,255,255,.12); color: #eaf6fb; font-size: 11px; line-height: 1;
+}
+.g-propbtns button:hover { background: rgba(125,75,214,.7); }
+.g-empty { font-size: 11.5px; color: #7d97a8; text-align: center; padding: 8px; }
+
+.g-quit {
+  width: 100%; margin-top: 10px; padding: 7px;
+  border: 1px solid rgba(255,255,255,.14); border-radius: 9px; cursor: pointer;
+  background: transparent; color: #a9c6d8; font-family: inherit; font-size: 12px;
+}
+.g-quit:hover { background: rgba(255,255,255,.07); color: #fff; }
+
+/* ---------- النرد ---------- */
+.center-die.rolling { animation: gshake .12s infinite; }
+@keyframes gshake {
+  0%   { transform: rotate(-7deg) translateY(0); }
+  50%  { transform: rotate(7deg) translateY(-5px); }
+  100% { transform: rotate(-7deg) translateY(0); }
+}
+
+/* =========================================================================
+   لائحة اللاعبين فاللوبي + اختيار المظهر
+   ========================================================================= */
+.room-players-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; font-size: 13px; font-weight: 700; color: #a9c6d8;
+}
+.room-players-count { font-size: 12px; color: #7d97a8; }
+.room-players-count b { color: #eaf6fb; }
+
+.room-players-list { display: flex; flex-direction: column; gap: 7px; }
+
+.room-player-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 11px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.room-player-row.is-host {
+  background: rgba(125,75,214,.14);
+  border-color: rgba(168,120,255,.35);
+}
+.room-player-row .room-player-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center; flex: 0 0 auto;
+  font-size: 14px; font-weight: 800; color: #16202b;
+  border: 2px solid rgba(255,255,255,.55);
+  box-shadow: 0 2px 6px rgba(0,0,0,.4);
+}
+.room-player-row .room-player-name {
+  flex: 1; display: flex; align-items: center; gap: 6px;
+  font-size: 13.5px; font-weight: 600; color: #eaf6fb;
+}
+.room-botbadge {
+  font-size: 8.5px; font-weight: 800; letter-spacing: .4px;
+  background: rgba(255,255,255,.14); color: #bcd6e6;
+  padding: 2px 6px; border-radius: 5px;
+}
+.kick-player {
+  width: 24px; height: 24px; padding: 0; flex: 0 0 auto;
+  border: 0; border-radius: 7px; cursor: pointer;
+  background: rgba(255,255,255,.09); color: #b9cede; font-size: 12px;
+  transition: background .15s ease, color .15s ease;
+}
+.kick-player:hover { background: #c9433c; color: #fff; }
+
+.add-bot-btn {
+  width: 100%; margin-top: 10px; padding: 9px;
+  border: 1px dashed rgba(255,255,255,.2); border-radius: 10px;
+  background: transparent; color: #a9c6d8; cursor: pointer;
+  font-family: inherit; font-size: 12.5px; font-weight: 600;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.add-bot-btn:hover:not(:disabled) {
+  background: rgba(125,75,214,.18); color: #fff; border-color: rgba(168,120,255,.5);
+}
+.add-bot-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+.chat-msg.system {
+  color: #8fb3c9; font-style: italic; font-size: 11.5px; opacity: .85;
+}
+
+/* ---------- نافذة اختيار المظهر ---------- */
+.appearance-modal {
+  position: relative;
+  width: min(340px, 92vw); padding: 26px 24px 22px;
+  border-radius: 18px; text-align: center;
+  background: linear-gradient(165deg, #1d2740, #131a2c);
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 24px 60px rgba(0,0,0,.7);
+}
+.appearance-modal h3 {
+  margin: 0 0 18px; font-size: 15px; font-weight: 700; color: #eaf6fb;
+}
+.appearance-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin-bottom: 20px;
+}
+.appearance-dot {
+  aspect-ratio: 1; border-radius: 50%; cursor: pointer;
+  border: 3px solid transparent;
+  box-shadow: 0 3px 8px rgba(0,0,0,.45);
+  transition: transform .14s ease, border-color .14s ease;
+}
+.appearance-dot:hover:not(:disabled) { transform: scale(1.12); }
+.appearance-dot.selected { border-color: #fff; transform: scale(1.1); }
+.appearance-dot.taken { opacity: .25; cursor: not-allowed; }
+.appearance-done {
+  width: 100%; padding: 11px; border: 0; border-radius: 11px; cursor: pointer;
+  font-family: inherit; font-size: 14px; font-weight: 700; color: #fff;
+  background: linear-gradient(180deg, #7d4bd6, #6435b8);
+  box-shadow: 0 4px 0 #4b2589;
+}
+.appearance-done:hover { filter: brightness(1.12); }
+
+/* =========================================================================
+   MONOPOLY BUILDINGS + RICHUP-STYLE TOKEN MOTION
+   Added for the classic even-building system.
+   ========================================================================= */
+
+/* ---------- Real visual houses / hotel on the board ---------- */
+.rt-houses {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1px;
+  min-height: 9px;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.85));
+  text-shadow: none;
+  letter-spacing: 0;
+}
+
+.rt-house,
+.mini-house {
+  position: relative;
+  display: inline-block;
+  width: 9px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 1px 1px 2px 2px;
+  background: linear-gradient(180deg, #46df76 0%, #159346 100%);
+  border: 1px solid rgba(220,255,230,.75);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 1px 2px rgba(0,0,0,.65);
+}
+.rt-house::before,
+.mini-house::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  transform: translateX(-50%) rotate(45deg);
+  width: 7px;
+  height: 7px;
+  border-radius: 1px;
+  background: #2fc765;
+  border-left: 1px solid rgba(220,255,230,.72);
+  border-top: 1px solid rgba(220,255,230,.72);
+  z-index: -1;
+}
+
+.rt-hotel,
+.mini-hotel {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #ff625d 0%, #c9272e 100%);
+  border: 1px solid rgba(255,225,225,.85);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24), 0 1px 3px rgba(0,0,0,.72);
+}
+.rt-hotel::before,
+.mini-hotel::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -5px;
+  width: 12px;
+  height: 8px;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 1px;
+  background: #ef4444;
+  border-left: 1px solid rgba(255,230,230,.8);
+  border-top: 1px solid rgba(255,230,230,.8);
+  z-index: -1;
+}
+
+.room-tile.edge-bottom .rt-houses {
+  top: auto;
+  bottom: 2px;
+}
+.room-tile.edge-left .rt-houses {
+  top: 50%;
+  left: 4px;
+  bottom: auto;
+  transform: translate(-35%, -50%) rotate(90deg);
+}
+.room-tile.edge-right .rt-houses {
+  top: 50%;
+  left: auto;
+  right: 4px;
+  bottom: auto;
+  transform: translate(35%, -50%) rotate(90deg);
+}
+
+/* ---------- Building / ownership pulse ---------- */
+.room-tile.tile-pulse-land { animation: tileLandPulse .38s ease-out; }
+.room-tile.tile-pulse-money { animation: tileMoneyPulse .5s ease-out; }
+.room-tile.tile-pulse-house { animation: tileHousePulse .48s ease-out; }
+.room-tile.tile-pulse-hotel { animation: tileHotelPulse .55s ease-out; }
+.room-tile.tile-pulse-sell { animation: tileSellPulse .42s ease-out; }
+.room-tile.tile-pulse-jail { animation: tileJailPulse .52s ease-out; }
+.room-tile.tile-pulse-mortgage,
+.room-tile.tile-pulse-unmortgage { animation: tileMortgagePulse .48s ease-out; }
+
+@keyframes tileLandPulse {
+  0% { filter: brightness(1); }
+  48% { filter: brightness(1.48); box-shadow: inset 0 0 0 2px rgba(255,255,255,.8), 0 0 18px rgba(126,214,255,.6); }
+  100% { filter: brightness(1); }
+}
+@keyframes tileMoneyPulse {
+  45% { filter: brightness(1.55); box-shadow: inset 0 0 0 2px #a7ff8a, 0 0 22px rgba(91,255,135,.58); }
+}
+@keyframes tileHousePulse {
+  45% { filter: brightness(1.5); box-shadow: inset 0 0 0 2px #5cf08a, 0 0 22px rgba(52,220,107,.55); }
+}
+@keyframes tileHotelPulse {
+  45% { filter: brightness(1.48); box-shadow: inset 0 0 0 2px #ff8a84, 0 0 25px rgba(255,67,72,.65); }
+}
+@keyframes tileSellPulse {
+  45% { filter: brightness(1.25); box-shadow: inset 0 0 0 2px #ffd36d, 0 0 18px rgba(255,190,65,.4); }
+}
+@keyframes tileJailPulse {
+  45% { filter: brightness(1.4); box-shadow: inset 0 0 0 2px #ff6b67, 0 0 24px rgba(255,62,62,.65); }
+}
+@keyframes tileMortgagePulse {
+  45% { filter: brightness(1.35); box-shadow: inset 0 0 0 2px #8eb1c9, 0 0 18px rgba(100,169,213,.45); }
+}
+
+/* ---------- Richup-like player hop token ---------- */
+.g-token {
+  position: relative;
+  width: clamp(11px, .9vw, 15px);
+  height: clamp(11px, .9vw, 15px);
+  border: 2px solid rgba(255,255,255,.94);
+  box-shadow: 0 2px 6px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.g-token::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.13);
+}
+.g-token.active {
+  transform: scale(1.28);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.45), 0 0 14px rgba(118,211,255,.48), 0 3px 8px rgba(0,0,0,.75);
+}
+.g-token-mover {
+  position: fixed !important;
+  z-index: 99999 !important;
+  width: 19px !important;
+  height: 19px !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+  transform-origin: center;
+  will-change: left, top, transform, filter;
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.35),
+    0 7px 15px rgba(0,0,0,.62),
+    0 0 18px rgba(109,207,255,.38) !important;
+}
+.g-token-mover::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 115%;
+  width: 23px;
+  height: 7px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(0,0,0,.42);
+  filter: blur(3px);
+}
+.g-token-mover.teleporting {
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.42),
+    0 8px 18px rgba(0,0,0,.7),
+    0 0 28px rgba(255,91,96,.55) !important;
+}
+
+/* ---------- Monopoly property management ---------- */
+.g-building-bank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 7px 9px;
+  margin: 0 0 5px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  background: rgba(3,10,15,.42);
+  color: #9eb7c8;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+.g-building-bank span { display:flex; align-items:center; gap:6px; }
+.g-building-bank .mini-house { width:10px; height:7px; z-index:0; }
+.g-building-bank .mini-hotel { width:17px; height:8px; z-index:0; }
+
+.g-prop {
+  min-height: 43px;
+  padding: 7px 8px;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,.045);
+  transition: border-color .16s ease, background .16s ease, opacity .16s ease;
+}
+.g-prop.full-set {
+  border-color: rgba(84,220,139,.18);
+  background: linear-gradient(90deg, rgba(38,153,91,.10), rgba(255,255,255,.035));
+}
+.g-prop.is-mortgaged { opacity: .68; }
+.g-propname { min-width: 0; display:flex; flex-direction:column; gap:2px; }
+.g-prop-title { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:700; color:#eaf6fb; }
+.g-prop-meta { display:flex; align-items:center; gap:5px; min-height:11px; }
+.g-fullset {
+  display:inline-flex;
+  padding:1px 5px;
+  border-radius:999px;
+  background:rgba(61,205,121,.16);
+  border:1px solid rgba(86,229,146,.25);
+  color:#79e7a6;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.35px;
+}
+.g-mort {
+  display:inline-flex;
+  padding:1px 5px;
+  border-radius:999px;
+  background:rgba(223,80,80,.12);
+  border:1px solid rgba(255,106,106,.2);
+  color:#ff9d9d;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.25px;
+}
+.g-prophouses {
+  min-width:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  font-size:8px;
+  letter-spacing:0;
+}
+.prop-houses { display:flex; align-items:center; gap:1px; }
+.prop-houses .mini-house { width:8px; height:6px; z-index:0; }
+.prop-hotel { display:flex; align-items:center; gap:4px; color:#ff908c; font-size:7px; font-weight:900; letter-spacing:.25px; }
+.prop-hotel .mini-hotel { width:16px; height:8px; z-index:0; }
+
+.g-propbtns { display:flex; align-items:center; gap:4px; flex:0 0 auto; }
+.g-propbtns button {
+  width:auto;
+  min-width:28px;
+  height:28px;
+  padding:3px 7px;
+  border-radius:7px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  white-space:nowrap;
+  font-family:inherit;
+  font-size:8px;
+  font-weight:900;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.07);
+}
+.g-propbtns button small { font-size:7px; opacity:.72; font-weight:800; }
+.g-propbtns .build-btn:not(:disabled) { background:rgba(34,171,91,.22); border-color:rgba(75,224,133,.22); color:#86edaf; }
+.g-propbtns .sell-btn:not(:disabled) { background:rgba(226,157,48,.16); border-color:rgba(240,184,77,.18); color:#f2cb76; }
+.g-propbtns .mortgage-btn:not(:disabled) { color:#b7d6e8; }
+.g-propbtns button:disabled {
+  cursor:not-allowed;
+  opacity:.22;
+  filter:grayscale(.7);
+}
+.g-propbtns button:not(:disabled):hover { transform:translateY(-1px); filter:brightness(1.18); }
+
+.g-bankrupt:disabled,
+.g-btn:disabled {
+  opacity:.35;
+  cursor:not-allowed;
+  filter:grayscale(.8);
+  transform:none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g-token-mover,
+  .room-tile[class*="tile-pulse-"] { animation:none !important; transition:none !important; }
+}
+
+/* =========================================================================
+   LAND INFO / RICHUP-LIKE LAND TILES / FAST HOVER MOVEMENT
+   ========================================================================= */
+
+/* City lands are deliberately neutral/gray. The country identity comes from
+   the large blurred flag under the gray glass layer, like Richup. */
+.room-tile.land-city {
+  isolation: isolate;
+  cursor: pointer;
+  background: linear-gradient(155deg, #606b7d 0%, #485366 50%, #353f51 100%) !important;
+  border-color: rgba(220,235,246,.18);
+}
+.room-tile.land-clickable { cursor: pointer; }
+.room-tile.land-clickable:hover,
+.room-tile.land-clickable:focus-visible {
+  z-index: 12;
+  outline: none;
+  filter: brightness(1.13);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28), 0 5px 16px rgba(0,0,0,.45);
+}
+.room-tile .rt-land-bg,
+.room-tile .rt-land-dim {
+  position: absolute;
+  inset: -9%;
+  pointer-events: none;
+}
+.room-tile .rt-land-bg {
+  z-index: 0;
+  overflow: hidden;
+  opacity: .55;
+  transform: scale(1.05);
+}
+.room-tile .rt-land-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: blur(3px) saturate(.98) contrast(.98);
+  transform: scale(1.2);
+}
+.room-tile .rt-land-bg-emoji {
+  display: grid;
+  place-items: center;
+  font-size: clamp(42px, 5.2vw, 92px);
+  filter: blur(2.6px);
+  opacity: .8;
+}
+.room-tile .rt-land-dim {
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(88,97,114,.30), rgba(31,39,51,.56)),
+    rgba(38,46,59,.16);
+  backdrop-filter: blur(.55px);
+}
+.room-tile.land-city .color-bar {
+  display: none !important;
+}
+.room-tile.land-city .rt-price,
+.room-tile.land-city .rt-name,
+.room-tile.land-city .rt-flag,
+.room-tile.land-city .rt-houses,
+.room-tile.land-city .rt-tokens {
+  z-index: 5;
+}
+.room-tile.land-city .rt-name {
+  color: #f7fbff;
+  text-shadow: 0 2px 5px rgba(0,0,0,.82);
+  letter-spacing: -.01em;
+}
+.room-tile.land-city.edge-left .rt-name,
+.room-tile.land-city.edge-right .rt-name {
+  font-size: clamp(7px, 0.66vw, 9px);
+}
+.room-tile.land-city.edge-top .rt-name,
+.room-tile.land-city.edge-bottom .rt-name {
+  font-size: clamp(6.8px, 0.64vw, 9px);
+}
+.room-tile.land-city .rt-price {
+  color: #ebf2f8;
+  background: rgba(88,101,120,.76);
+  border: 1px solid rgba(255,255,255,.09);
+  padding: 3px 5px;
+  border-radius: 4px;
+  text-shadow: 0 1px 3px rgba(0,0,0,.68);
+}
+.room-tile.land-city .rt-flag {
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,.92), 0 2px 5px rgba(0,0,0,.72);
+}
+
+/* Hover/fly movement — straight and extremely fast, not jumping. */
+.g-token-mover.flight {
+  will-change: left, top, transform, filter, opacity;
+  filter: brightness(1.14);
+}
+.g-token-mover.flight::before {
+  content: '';
+  position: absolute;
+  right: 50%;
+  left: auto;
+  top: 50%;
+  width: 42px;
+  height: 9px;
+  transform: translateY(-50%) rotate(var(--flight-angle, 0deg));
+  transform-origin: 100% 50%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--flight-color, #7ddcff) 34%, transparent) 45%, var(--flight-color, #7ddcff) 100%);
+  filter: blur(4px);
+  opacity: .75;
+  z-index: -1;
+}
+.g-token-mover.flight::after {
+  background: rgba(255,255,255,.2);
+}
+
+/* Debt stops the turn completely. */
+.g-debt-warning {
+  max-width: 520px;
+  padding: 11px 15px;
+  border: 1px solid rgba(255,105,105,.34);
+  border-radius: 11px;
+  background: linear-gradient(180deg, rgba(126,38,44,.32), rgba(71,21,28,.30));
+  color: #ffb4b4;
+  font-size: clamp(11px,.9vw,14px);
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+  box-shadow: 0 8px 22px rgba(0,0,0,.28);
+}
+
+/* Right panel now acts only as a property list. Management is inside land info. */
+.g-prop-open {
+  width: 100%;
+  appearance: none;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+}
+.g-prop-open:hover {
+  background: rgba(106,173,211,.10);
+  border-color: rgba(119,190,229,.20);
+}
+.g-prop-arrow {
+  color: #79b9d8;
+  font-size: 20px;
+  line-height: 1;
+  opacity: .7;
+}
+
+/* ---------------- Richup-style land information panel ---------------- */
+.land-info-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 100000;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+.land-info-modal.show { display: flex; }
+.land-info-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(1,5,10,.50);
+  backdrop-filter: blur(2.2px);
+}
+.land-info-card {
+  --land-accent: #6b84a6;
+  position: relative;
+  width: min(360px, calc(100vw - 28px));
+  max-height: min(650px, calc(100vh - 34px));
+  overflow: hidden auto;
+  border-radius: 13px;
+  border: 1px solid rgba(161,192,215,.20);
+  background: linear-gradient(165deg, #2b3150 0%, #312344 46%, #24253b 100%);
+  color: #f4f7fb;
+  box-shadow: 0 25px 70px rgba(0,0,0,.70), inset 0 1px 0 rgba(255,255,255,.08);
+  isolation: isolate;
+}
+.land-info-flag-bg {
+  position: absolute;
+  inset: -35px;
+  z-index: -3;
+  opacity: .22;
+  overflow: hidden;
+}
+.land-info-flag-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(18px) saturate(.9) contrast(.88);
+  transform: scale(1.18);
+}
+.land-info-flag-emoji {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 230px;
+  filter: blur(12px);
+}
+.land-info-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(100,126,210,.20), transparent 42%),
+    linear-gradient(180deg, rgba(22,28,53,.58), rgba(43,29,60,.86) 55%, rgba(32,31,51,.94));
+  backdrop-filter: blur(1px);
+}
+.land-info-content { padding: 22px 22px 20px; }
+.land-info-close {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  z-index: 10;
+  width: 31px;
+  height: 31px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(5,10,18,.32);
+  color: #dbe8f2;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.land-info-country {
+  margin-top: 3px;
+  color: #a9bfe3;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.land-info-card h2 {
+  margin: 2px 32px 3px;
+  color: #fff;
+  font-size: clamp(23px,2.1vw,31px);
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 0 3px 10px rgba(0,0,0,.55);
+}
+.land-info-owner {
+  margin-bottom: 14px;
+  color: #a5bbd2;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+.land-info-owner.mortgaged { color: #ff9d9d; }
+.land-rents {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(255,255,255,.09);
+  border-bottom: 1px solid rgba(255,255,255,.09);
+  padding: 7px 0;
+}
+.land-rent-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 22px;
+  align-items: center;
+  min-height: 31px;
+  padding: 3px 5px;
+  color: #fff;
+  font-size: 13px;
+}
+.land-rent-row span { color: #eef3ff; }
+.land-rent-row b { color: #d9d4e8; font-size: 14px; }
+.land-rent-row.current {
+  margin: 0 -6px;
+  padding-inline: 11px;
+  border-radius: 7px;
+  background: rgba(123,81,161,.22);
+}
+.land-info-stats {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 8px;
+  margin-top: 13px;
+}
+.land-info-stats > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.land-info-stats span { color: #aab9d0; font-size: 10px; }
+.land-info-stats b { color: #fff; font-size: 16px; }
+.land-info-actions {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 8px;
+  margin-top: 15px;
+}
+.land-action {
+  min-height: 42px;
+  padding: 8px 9px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 9px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  background: rgba(255,255,255,.08);
+  box-shadow: 0 5px 13px rgba(0,0,0,.22);
+}
+.land-action small { display:block; margin-top:2px; opacity:.70; font-size:9px; }
+.land-action.buy { background: linear-gradient(180deg,#3f8fd8,#2f6db0); }
+.land-action.build { background: linear-gradient(180deg,#25a95b,#177741); }
+.land-action.sell { background: linear-gradient(180deg,#b07c2f,#80531f); }
+.land-action.mortgage { background: linear-gradient(180deg,#52697b,#344857); }
+.land-action.sell-land { background: linear-gradient(180deg,#d15151,#9f3737); }
+.land-action:hover { filter: brightness(1.13); transform: translateY(-1px); }
+.land-debt-note {
+  margin-top: 11px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,109,109,.24);
+  background: rgba(121,34,40,.23);
+  color: #ffb4b4;
+  font-size: 10px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .land-info-card { width: min(340px, calc(100vw - 18px)); }
+  .land-info-content { padding: 18px 16px 16px; }
+  .land-info-card h2 { font-size: 23px; }
+}
+
+
+/* ===== Continuous Richup-like player flight ===== */
+.g-token {
+  display:inline-grid;
+  place-items:center;
+  color:#fff;
+  font-size:clamp(7px,.55vw,9px);
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 1px 2px rgba(0,0,0,.65);
+}
+.g-token-mover {
+  width:24px !important;
+  height:24px !important;
+  font-size:9px !important;
+  border-width:2px !important;
+  box-shadow:0 0 0 3px rgba(255,255,255,.36),0 7px 16px rgba(0,0,0,.58),0 0 22px rgba(111,207,255,.34) !important;
+}
+.g-token-ghost {
+  z-index:99998 !important;
+  filter:blur(2.2px) brightness(1.25) !important;
+  border-color:rgba(255,255,255,.34) !important;
+  box-shadow:none !important;
+  pointer-events:none !important;
+}
+.g-token-ghost::before,.g-token-ghost::after { display:none !important; }
+
+.g-card.deathvalley {
+  border-color:rgba(206,177,224,.35);
+  background:radial-gradient(circle at 50% 8%,rgba(113,86,132,.46),transparent 42%),linear-gradient(180deg,#251b2c,#0d0a10);
+  color:#f2e8f7;
+  box-shadow:0 20px 60px rgba(0,0,0,.62),0 0 30px rgba(130,92,154,.18);
+}
+
+.g-valley-curse{display:inline-flex;margin-inline-start:5px;padding:1px 5px;border-radius:999px;background:#2a1b30;border:1px solid rgba(215,183,232,.25);color:#e9d7f2;font-style:normal;font-size:8px;font-weight:900;}
+
+/* =========================================================================
+   V3 — RICHUP CARD / OWNERSHIP / TOKEN LAYER / END SCREEN
+   ========================================================================= */
+
+/* Keep every non-corner track identical. Only the four corners are larger. */
+.lobby-board {
+  grid-template-columns: minmax(0,1.5295fr) repeat(11,minmax(0,1fr)) minmax(0,1.5295fr) !important;
+  grid-template-rows: minmax(0,1.5295fr) repeat(11,minmax(0,1fr)) minmax(0,1.5295fr) !important;
+}
+
+/* Player tokens sit ON TOP of the land name/text, not underneath the tile. */
+.rt-tokens {
+  inset: 0 !important;
+  z-index: 40 !important;
+  display: flex !important;
+  align-items: center !important;
+  align-content: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+}
+.rt-tokens .g-token {
+  position: relative !important;
+  z-index: 41 !important;
+  width: clamp(13px,1vw,17px) !important;
+  height: clamp(13px,1vw,17px) !important;
+  flex: 0 0 auto !important;
+  margin: 0 -1px !important;
+  font-size: clamp(7px,.55vw,9px) !important;
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,.94),0 3px 8px rgba(0,0,0,.74),0 0 9px rgba(0,0,0,.26) !important;
+}
+.room-tile .rt-name,
+.room-tile .rt-price,
+.room-tile .rt-flag,
+.room-tile .rt-icon { position: relative; z-index: 8; }
+
+/* Strong Richup-like ownership block. It lives INSIDE the property and behind
+   the text, instead of looking like a tiny bar hanging under the land. */
+.room-tile.owned {
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb,var(--owner-color) 88%,white 12%),
+    inset 0 0 23px color-mix(in srgb,var(--owner-color) 29%,transparent),
+    0 2px 8px rgba(0,0,0,.52) !important;
+}
+.room-tile.owned::after {
+  z-index: 3 !important;
+  opacity: .92;
+  border-radius: 4px !important;
+  background: linear-gradient(135deg,
+    color-mix(in srgb,var(--owner-color) 84%,white 16%),
+    color-mix(in srgb,var(--owner-color) 92%,black 8%)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.23),0 0 11px color-mix(in srgb,var(--owner-color) 54%,transparent) !important;
+}
+.room-tile.owned.edge-top::after {
+  top: 0 !important; left: 3px !important; right: 3px !important; height: 34% !important;
+}
+.room-tile.owned.edge-bottom::after {
+  bottom: 0 !important; left: 3px !important; right: 3px !important; height: 34% !important;
+}
+.room-tile.owned.edge-left::after {
+  left: 0 !important; top: 3px !important; bottom: 3px !important; width: 34% !important;
+}
+.room-tile.owned.edge-right::after {
+  right: 0 !important; top: 3px !important; bottom: 3px !important; width: 34% !important;
+}
+
+/* Floating Richup-style land card: no fullscreen popup, no dim backdrop,
+   and no ugly internal scrollbar. */
+.land-info-modal.land-info-floating {
+  position: fixed !important;
+  inset: auto !important;
+  display: none;
+  z-index: 100000;
+  width: auto;
+  height: auto;
+  padding: 0 !important;
+  pointer-events: none;
+}
+.land-info-modal.land-info-floating.show { display: block !important; }
+.land-info-modal.land-info-floating .land-info-card { pointer-events: auto; }
+.land-info-backdrop { display: none !important; }
+.land-info-card {
+  width: min(330px,calc(100vw - 24px)) !important;
+  max-height: none !important;
+  overflow: visible !important;
+  scrollbar-width: none !important;
+  border-radius: 11px !important;
+  border: 1px solid rgba(168,188,221,.18) !important;
+  background: linear-gradient(165deg,rgba(38,49,78,.93),rgba(57,35,70,.95) 53%,rgba(38,34,55,.97)) !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,.64),inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+.land-info-card::-webkit-scrollbar { display:none !important; width:0 !important; }
+.land-info-content { padding: 18px 18px 16px !important; }
+.land-info-country { margin-top: 1px !important; font-size: 10px !important; }
+.land-info-card h2 { margin: 2px 30px 2px !important; font-size: clamp(23px,1.9vw,30px) !important; }
+.land-info-owner { margin-bottom: 10px !important; }
+.land-rents { padding: 5px 0 !important; }
+.land-rent-row { min-height: 27px !important; font-size: 12px !important; }
+.land-rent-row b { font-size: 13px !important; }
+.land-info-actions { margin-top: 11px !important; gap: 7px !important; }
+.land-action { min-height: 39px !important; padding: 7px 8px !important; }
+
+/* Make the country flag clearly visible behind the card, like Richup. */
+.land-info-flag-bg {
+  inset: -22px !important;
+  opacity: .40 !important;
+}
+.land-info-flag-bg img {
+  object-fit: cover !important;
+  object-position: center !important;
+  filter: blur(11px) saturate(1.05) contrast(.96) !important;
+  transform: scale(1.13) !important;
+}
+.land-info-shade {
+  background:
+    radial-gradient(circle at 50% 13%,rgba(86,110,183,.18),transparent 40%),
+    linear-gradient(180deg,rgba(32,38,62,.50),rgba(51,34,66,.76) 56%,rgba(31,31,49,.88)) !important;
+  backdrop-filter: blur(.4px) !important;
+}
+
+/* Death Valley must visibly show the exact amount lost. */
+.g-card.deathvalley.loss {
+  font-size: 15px !important;
+  text-align:center;
+  line-height:1.42;
+}
+.g-card.deathvalley.loss b {
+  display:block;
+  margin:7px 0 2px;
+  color:#ff7272;
+  font-size:34px;
+  line-height:1;
+  text-shadow:0 0 18px rgba(255,70,70,.32);
+}
+.g-card.deathvalley.loss small { color:#d8c9df; font-size:11px; }
+
+/* Proper end-game overlay. */
+.game-end-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 150000;
+  display: none;
+  place-items: center;
+  padding: 24px;
+  background: rgba(1,5,9,.72);
+  backdrop-filter: blur(9px);
+}
+.game-end-screen.show { display:grid; }
+.game-end-card {
+  width:min(430px,92vw);
+  padding:34px 30px 30px;
+  border-radius:22px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(160deg,#12222e,#09131b 64%,#050b10);
+  box-shadow:0 32px 90px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.game-end-card.win { box-shadow:0 32px 90px rgba(0,0,0,.72),0 0 45px rgba(112,221,133,.16),inset 0 1px 0 rgba(255,255,255,.08); }
+.game-end-card.lose { box-shadow:0 32px 90px rgba(0,0,0,.72),0 0 45px rgba(224,75,82,.15),inset 0 1px 0 rgba(255,255,255,.08); }
+.game-end-icon { font-size:62px; filter:drop-shadow(0 10px 18px rgba(0,0,0,.38)); }
+.game-end-card h1 { margin:8px 0 4px; font-size:38px; letter-spacing:1px; }
+.game-end-card.win h1 { color:#9df3ae; }
+.game-end-card.lose h1 { color:#ff8f91; }
+.game-end-card p { margin:0 0 22px; color:#9fb6c4; font-size:14px; }
+.game-end-card button {
+  min-width:180px;
+  padding:12px 18px;
+  border-radius:12px;
+  color:#061118;
+  background:linear-gradient(180deg,#8eddf3,#5abbdc);
+  font-weight:900;
+  box-shadow:0 7px 18px rgba(54,162,198,.24);
+}
+
+/* More readable, fast Richup-style flying token. */
+.g-token-mover {
+  width:26px !important;
+  height:26px !important;
+  z-index:120000 !important;
+  box-shadow:0 0 0 3px rgba(255,255,255,.42),0 8px 20px rgba(0,0,0,.64),0 0 25px color-mix(in srgb,var(--flight-color,#7ddcff) 48%,transparent) !important;
+}
+.g-token-mover.flight { filter:brightness(1.18) drop-shadow(0 0 7px var(--flight-color,#7ddcff)); }
+.g-token-ghost { filter:blur(3px) brightness(1.35) !important; }
+
+@media (max-height:720px) {
+  .land-info-card { transform:scale(.88); transform-origin:top left; }
+}
+
+
+/* =========================================================================
+   V4 — OWNED PRICE HIDING + REAL SIX-FACE 3D DICE
+   ========================================================================= */
+
+/* Richup behavior: once land is owned, its purchase price badge disappears. */
+.room-tile.owned .rt-price {
+  display: none !important;
+}
+
+.land-action.disabled,
+.land-action:disabled {
+  cursor: not-allowed !important;
+  opacity: .52 !important;
+  filter: grayscale(.35) !important;
+  box-shadow: none !important;
+}
+.land-action.disabled small,
+.land-action:disabled small {
+  display: block;
+  margin-top: 2px;
+  white-space: normal;
+  line-height: 1.15;
+  font-size: 8px !important;
+  opacity: .9;
+}
+
+/* The old dice div becomes a perspective viewport. */
+.center-die.die-3d {
+  --die-size: clamp(62px, 4.7vw, 82px);
+  --die-depth: clamp(31px, 2.35vw, 41px);
+  width: var(--die-size) !important;
+  height: var(--die-size) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  perspective: 520px;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+.dice-cube-3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 12px 11px rgba(0,0,0,.38));
+}
+
+.dice-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  grid-template-rows: repeat(3,1fr);
+  place-items: center;
+  padding: clamp(11px, .9vw, 15px);
+  border-radius: clamp(11px, .95vw, 16px);
+  border: 1px solid rgba(116,112,125,.26);
+  background:
+    linear-gradient(145deg,#ffffff 0%,#f2f1f5 55%,#d8d7de 100%);
+  box-shadow:
+    inset 4px 4px 7px rgba(255,255,255,.88),
+    inset -7px -8px 12px rgba(70,65,78,.16);
+  backface-visibility: hidden;
+}
+.dice-face-front  { transform: translateZ(var(--die-depth)); }
+.dice-face-back   { transform: rotateY(180deg) translateZ(var(--die-depth)); }
+.dice-face-right  { transform: rotateY(90deg) translateZ(var(--die-depth)); }
+.dice-face-left   { transform: rotateY(-90deg) translateZ(var(--die-depth)); }
+.dice-face-top    { transform: rotateX(90deg) translateZ(var(--die-depth)); }
+.dice-face-bottom { transform: rotateX(-90deg) translateZ(var(--die-depth)); }
+
+.dice-face .pip {
+  width: clamp(8px,.72vw,12px) !important;
+  height: clamp(8px,.72vw,12px) !important;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%,#48434e 0 12%,#211e27 48%,#101015 100%) !important;
+  box-shadow: inset 1px 1px 2px rgba(255,255,255,.18),0 1px 2px rgba(0,0,0,.36) !important;
+}
+
+.center-die.die-3d.rolling-3d .dice-cube-3d {
+  filter: drop-shadow(0 15px 12px rgba(0,0,0,.42)) blur(.12px);
+}
+.center-die.die-3d.rolling-3d {
+  animation: diceCubeLift .9s cubic-bezier(.16,.78,.24,1);
+}
+@keyframes diceCubeLift {
+  0%,100% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-8px) scale(1.035); }
+  76% { transform: translateY(2px) scale(.985); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .center-die.die-3d.rolling-3d { animation: none !important; }
+}
+
+
+/* ===== V5: owned lands never show purchase price ===== */
+.room-tile.owned .rt-price { display:none !important; visibility:hidden !important; }
+
+/* ===== V5: Richup land card lives inside the center board, not as a page modal ===== */
+#lobbyBoard .lobby-center { position:relative !important; overflow:visible !important; }
+#lobbyBoard .lobby-center > .land-info-modal.land-info-floating {
+  position:absolute !important;
+  inset:auto !important;
+  display:none !important;
+  width:330px !important;
+  height:auto !important;
+  padding:0 !important;
+  margin:0 !important;
+  z-index:5000 !important;
+  pointer-events:none !important;
+}
+#lobbyBoard .lobby-center > .land-info-modal.land-info-floating.show {
+  display:block !important;
+}
+#lobbyBoard .lobby-center > .land-info-modal.land-info-floating .land-info-card {
+  position:relative !important;
+  width:330px !important;
+  max-width:calc(100% - 12px) !important;
+  max-height:none !important;
+  overflow:visible !important;
+  pointer-events:auto !important;
+}
+
+/* ===== V5: unmistakable real six-face dice cubes ===== */
+.center-die.die-3d {
+  --cube-size:72px;
+  width:94px !important;
+  height:94px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  perspective:620px !important;
+  overflow:visible !important;
+  transform:none !important;
+}
+.dice-cube-3d {
+  position:relative !important;
+  width:var(--cube-size) !important;
+  height:var(--cube-size) !important;
+  transform-style:preserve-3d !important;
+  transform-origin:center center !important;
+  will-change:transform !important;
+  filter:drop-shadow(0 13px 13px rgba(0,0,0,.42));
+}
+.dice-face {
+  position:absolute !important;
+  width:var(--cube-size) !important;
+  height:var(--cube-size) !important;
+  inset:auto !important;
+  left:0 !important;
+  top:0 !important;
+  display:grid !important;
+  grid-template-columns:repeat(3,1fr) !important;
+  grid-template-rows:repeat(3,1fr) !important;
+  place-items:center !important;
+  padding:12px !important;
+  border-radius:13px !important;
+  border:1px solid rgba(105,101,114,.28) !important;
+  background:linear-gradient(145deg,#fff 0%,#f3f2f6 55%,#d9d8df 100%) !important;
+  box-shadow:inset 4px 4px 8px rgba(255,255,255,.88),inset -7px -8px 12px rgba(65,61,74,.18) !important;
+  backface-visibility:hidden !important;
+  -webkit-backface-visibility:hidden !important;
+}
+.dice-face-front  { transform:rotateY(0deg) translateZ(36px) !important; }
+.dice-face-back   { transform:rotateY(180deg) translateZ(36px) !important; }
+.dice-face-right  { transform:rotateY(90deg) translateZ(36px) !important; }
+.dice-face-left   { transform:rotateY(-90deg) translateZ(36px) !important; }
+.dice-face-top    { transform:rotateX(90deg) translateZ(36px) !important; }
+.dice-face-bottom { transform:rotateX(-90deg) translateZ(36px) !important; }
+.dice-face .pip {
+  width:10px !important;
+  height:10px !important;
+  border-radius:50% !important;
+  background:radial-gradient(circle at 34% 30%,#49434f 0 12%,#211e27 48%,#0f0e13 100%) !important;
+  box-shadow:inset 1px 1px 2px rgba(255,255,255,.18),0 1px 2px rgba(0,0,0,.38) !important;
+}
+.center-die.die-3d.rolling-3d { animation:v5DiceLift .82s cubic-bezier(.18,.72,.24,1) !important; }
+@keyframes v5DiceLift {
+  0%,100% { transform:translateY(0) scale(1); }
+  32% { transform:translateY(-10px) scale(1.04); }
+  74% { transform:translateY(2px) scale(.99); }
+}
+
+
+/* ========================================================================
+   V6 — Richup-style LAND-ANCHORED information card
+   ======================================================================== */
+body > .land-info-modal.land-info-floating {
+  position: fixed !important;
+  inset: auto !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: none !important;
+  z-index: 100000 !important;
+  pointer-events: none !important;
+}
+body > .land-info-modal.land-info-floating.show {
+  display: block !important;
+  animation: landCardPop .13s cubic-bezier(.2,.8,.2,1) both;
+}
+body > .land-info-modal.land-info-floating .land-info-card {
+  --land-arrow-x: 50%;
+  --land-arrow-y: 50%;
+  position: relative !important;
+  width: min(320px, calc(100vw - 20px)) !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  border-radius: 9px !important;
+  border: 1px solid rgba(142,157,202,.22) !important;
+  background: rgba(29,31,53,.94) !important;
+  box-shadow: 0 16px 42px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+@keyframes landCardPop {
+  from { opacity:0; transform:scale(.965); }
+  to   { opacity:1; transform:scale(1); }
+}
+
+/* The small Richup-like pointer that makes the card visibly originate from
+   the clicked land. */
+body > .land-info-modal[data-anchor="top"] .land-info-card::after,
+body > .land-info-modal[data-anchor="bottom"] .land-info-card::after,
+body > .land-info-modal[data-anchor="left"] .land-info-card::after,
+body > .land-info-modal[data-anchor="right"] .land-info-card::after {
+  content:"";
+  position:absolute;
+  width:0;
+  height:0;
+  z-index:20;
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,.25));
+}
+body > .land-info-modal[data-anchor="top"] .land-info-card::after {
+  top:-9px;
+  left:var(--land-arrow-x);
+  transform:translateX(-50%);
+  border-left:9px solid transparent;
+  border-right:9px solid transparent;
+  border-bottom:9px solid rgba(37,39,65,.98);
+}
+body > .land-info-modal[data-anchor="bottom"] .land-info-card::after {
+  bottom:-9px;
+  left:var(--land-arrow-x);
+  transform:translateX(-50%);
+  border-left:9px solid transparent;
+  border-right:9px solid transparent;
+  border-top:9px solid rgba(38,35,57,.98);
+}
+body > .land-info-modal[data-anchor="left"] .land-info-card::after {
+  left:-9px;
+  top:var(--land-arrow-y);
+  transform:translateY(-50%);
+  border-top:9px solid transparent;
+  border-bottom:9px solid transparent;
+  border-right:9px solid rgba(39,41,67,.98);
+}
+body > .land-info-modal[data-anchor="right"] .land-info-card::after {
+  right:-9px;
+  top:var(--land-arrow-y);
+  transform:translateY(-50%);
+  border-top:9px solid transparent;
+  border-bottom:9px solid transparent;
+  border-left:9px solid rgba(39,38,61,.98);
+}
+
+/* Use the supplied full-size country artwork as the ACTUAL popup background,
+   rather than the tiny round board flag. Keep it recognizable, only softly
+   blurred behind the glass so the text stays readable. */
+body > .land-info-modal .land-info-flag-bg {
+  position:absolute !important;
+  inset:0 !important;
+  overflow:hidden !important;
+  border-radius:9px !important;
+  opacity:.60 !important;
+  z-index:0 !important;
+}
+body > .land-info-modal .land-info-flag-bg .land-info-flag-image {
+  position:absolute !important;
+  inset:-8% !important;
+  width:116% !important;
+  height:116% !important;
+  object-fit:cover !important;
+  object-position:center center !important;
+  filter:blur(4px) saturate(.92) contrast(.96) brightness(.82) !important;
+  transform:scale(1.04) !important;
+}
+body > .land-info-modal .land-info-shade {
+  position:absolute !important;
+  inset:0 !important;
+  z-index:1 !important;
+  border-radius:9px !important;
+  background:
+    linear-gradient(180deg, rgba(25,29,54,.42), rgba(41,31,58,.70) 56%, rgba(27,28,48,.88)) !important;
+  backdrop-filter:blur(.25px) !important;
+}
+body > .land-info-modal .land-info-content,
+body > .land-info-modal .land-info-close {
+  position:relative !important;
+  z-index:3 !important;
+}
+body > .land-info-modal .land-info-content { padding:16px 18px 15px !important; }
+body > .land-info-modal .land-info-country { font-size:9px !important; letter-spacing:.12em !important; }
+body > .land-info-modal .land-info-card h2 { font-size:27px !important; margin:2px 28px 2px !important; }
+body > .land-info-modal .land-rent-row { min-height:25px !important; }
+body > .land-info-modal .land-info-actions { margin-top:9px !important; }
+
+/* Avoid the old board-center override winning if an older cached card exists. */
+#lobbyBoard .lobby-center > .land-info-modal.land-info-floating { display:none !important; }
+
+/* ========================================================================
+   V7 — HARD FIX: separate ROUND board flags from FULL popup flags + popup
+   visibility that cannot be killed by older modal CSS.
+   ======================================================================== */
+
+/* The small flags on the board are ALWAYS circular chips. */
+.room-tile .rt-flag.rt-img {
+  overflow: hidden !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+}
+.room-tile .rt-flag.rt-img img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  display: block !important;
+}
+
+/* Completely independent floating land card. No old .land-info-modal rule is
+   allowed to decide whether this thing exists or where it lives. */
+.land-info-v7 {
+  position: fixed !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 2147483000 !important;
+  pointer-events: none !important;
+  direction: ltr !important;
+}
+.land-info-v7.show { display: block !important; }
+.land-info-v7.land-info-v7-pop { animation: v7LandPop .14s cubic-bezier(.2,.85,.2,1) both; }
+@keyframes v7LandPop {
+  from { opacity: 0; transform: scale(.965); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.land-info-v7-card {
+  --land-arrow-x: 50%;
+  --land-arrow-y: 50%;
+  position: relative !important;
+  width: min(318px, calc(100vw - 18px)) !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(158,169,213,.23) !important;
+  background: #252747 !important;
+  color: #fff !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.56), inset 0 1px 0 rgba(255,255,255,.07) !important;
+  isolation: isolate !important;
+}
+.land-info-v7-card::-webkit-scrollbar { display: none !important; }
+
+/* FULL rectangular country artwork — popup only. */
+.land-info-v7-card .land-info-flag-bg {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  overflow: hidden !important;
+  border-radius: 8px !important;
+  opacity: .72 !important;
+  pointer-events: none !important;
+}
+.land-info-v7-card .land-info-flag-image {
+  position: absolute !important;
+  inset: -7% !important;
+  width: 114% !important;
+  height: 114% !important;
+  display: block !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  filter: blur(3.2px) saturate(.95) contrast(.97) brightness(.72) !important;
+  transform: scale(1.04) !important;
+}
+.land-info-v7-card .land-info-flag-emoji {
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 150px !important;
+  filter: blur(5px) brightness(.68) !important;
+  transform: scale(1.25) !important;
+}
+.land-info-v7-card .land-info-shade {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  border-radius: 8px !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(180deg, rgba(24,27,48,.44) 0%, rgba(31,31,55,.66) 50%, rgba(28,27,49,.90) 100%),
+    rgba(24,26,47,.26) !important;
+}
+.land-info-v7-card .land-info-content,
+.land-info-v7-card .land-info-close {
+  position: relative !important;
+  z-index: 3 !important;
+}
+.land-info-v7-card .land-info-content {
+  padding: 15px 18px 16px !important;
+}
+.land-info-v7-card .land-info-close {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  width: 30px !important;
+  height: 30px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 7px !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  background: rgba(13,17,30,.54) !important;
+  color: #e5e9f5 !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+}
+.land-info-v7-card .land-info-country {
+  margin: 1px 34px 2px !important;
+  text-align: center !important;
+  color: #bfc7e8 !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: .13em !important;
+  text-transform: uppercase !important;
+}
+.land-info-v7-card h2 {
+  margin: 1px 34px 2px !important;
+  text-align: center !important;
+  color: #fff !important;
+  font-size: 27px !important;
+  line-height: 1.05 !important;
+  text-shadow: 0 2px 5px rgba(0,0,0,.46) !important;
+}
+.land-info-v7-card .land-info-owner {
+  margin: 5px 0 10px !important;
+  text-align: center !important;
+  color: #b6bfd9 !important;
+  font-size: 11px !important;
+}
+.land-info-v7-card .land-info-owner.mortgaged { color: #ff9e9e !important; }
+.land-info-v7-card .land-rents {
+  padding: 7px 0 !important;
+  border-top: 1px solid rgba(255,255,255,.10) !important;
+  border-bottom: 1px solid rgba(255,255,255,.10) !important;
+}
+.land-info-v7-card .land-rent-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  min-height: 25px !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  color: #f4f5fb !important;
+  font-size: 12px !important;
+}
+.land-info-v7-card .land-rent-row b { font-size: 12px !important; }
+.land-info-v7-card .land-rent-row.current { background: rgba(145,99,194,.26) !important; }
+.land-info-v7-card .land-info-stats {
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 8px !important;
+  padding-top: 10px !important;
+}
+.land-info-v7-card .land-info-stats > div { text-align: center !important; }
+.land-info-v7-card .land-info-stats span { display: block !important; color: #bac0d5 !important; font-size: 9px !important; }
+.land-info-v7-card .land-info-stats b { display: block !important; margin-top: 2px !important; color: #fff !important; font-size: 15px !important; }
+.land-info-v7-card .land-info-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 7px !important;
+  margin-top: 10px !important;
+}
+.land-info-v7-card .land-action {
+  min-height: 45px !important;
+  padding: 8px 8px !important;
+  border-radius: 8px !important;
+  color: #fff !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+}
+.land-info-v7-card .land-action small { display: block !important; margin-top: 2px !important; font-size: 9px !important; opacity: .84 !important; }
+.land-info-v7-card .land-action.buy { background: linear-gradient(180deg,#468fd2,#2f6fae) !important; }
+.land-info-v7-card .land-action.build { background: linear-gradient(180deg,#3d8d6a,#2b664e) !important; }
+.land-info-v7-card .land-action.sell,
+.land-info-v7-card .land-action.sell-land { background: linear-gradient(180deg,#bd8329,#8a5d1c) !important; }
+.land-info-v7-card .land-action.mortgage { background: linear-gradient(180deg,#627d91,#40596c) !important; }
+.land-info-v7-card .land-action.disabled { opacity: .50 !important; cursor: not-allowed !important; }
+.land-info-v7-card .land-debt-note { margin-top: 9px !important; color: #ffabab !important; font-size: 10px !important; text-align: center !important; }
+
+/* Pointer connecting the popup to the exact land. */
+.land-info-v7[data-anchor="top"] .land-info-v7-card::after,
+.land-info-v7[data-anchor="bottom"] .land-info-v7-card::after,
+.land-info-v7[data-anchor="left"] .land-info-v7-card::after,
+.land-info-v7[data-anchor="right"] .land-info-v7-card::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 20 !important;
+  width: 0 !important;
+  height: 0 !important;
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,.28));
+}
+.land-info-v7[data-anchor="top"] .land-info-v7-card::after {
+  top: -9px !important; left: var(--land-arrow-x) !important; transform: translateX(-50%) !important;
+  border-left: 9px solid transparent !important; border-right: 9px solid transparent !important; border-bottom: 9px solid #343553 !important;
+}
+.land-info-v7[data-anchor="bottom"] .land-info-v7-card::after {
+  bottom: -9px !important; left: var(--land-arrow-x) !important; transform: translateX(-50%) !important;
+  border-left: 9px solid transparent !important; border-right: 9px solid transparent !important; border-top: 9px solid #2b2b49 !important;
+}
+.land-info-v7[data-anchor="left"] .land-info-v7-card::after {
+  left: -9px !important; top: var(--land-arrow-y) !important; transform: translateY(-50%) !important;
+  border-top: 9px solid transparent !important; border-bottom: 9px solid transparent !important; border-right: 9px solid #343553 !important;
+}
+.land-info-v7[data-anchor="right"] .land-info-v7-card::after {
+  right: -9px !important; top: var(--land-arrow-y) !important; transform: translateY(-50%) !important;
+  border-top: 9px solid transparent !important; border-bottom: 9px solid transparent !important; border-left: 9px solid #343553 !important;
+}
+
+/* =====================================================================
+   V8 — reliable close/outside click + Death Valley / Surprise / Treasure info
+   ===================================================================== */
+.land-info-v8 {
+  position: fixed !important;
+  width: auto !important;
+  height: auto !important;
+  z-index: 2147483000 !important;
+  pointer-events: auto !important;
+  direction: ltr !important;
+  display: none;
+}
+.land-info-v8.show { display: block !important; }
+.land-info-v8.land-info-v8-pop { animation: v8LandPop .14s cubic-bezier(.2,.85,.2,1) both; }
+@keyframes v8LandPop { from { opacity:0; transform:scale(.965); } to { opacity:1; transform:scale(1); } }
+
+.land-info-v8-card {
+  --land-arrow-x: 50%;
+  --land-arrow-y: 50%;
+  position: relative !important;
+  width: min(318px, calc(100vw - 18px)) !important;
+  max-height: none !important;
+  overflow: visible !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(158,169,213,.23) !important;
+  background: #252747 !important;
+  color: #fff !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,.56), inset 0 1px 0 rgba(255,255,255,.07) !important;
+  isolation: isolate !important;
+  pointer-events: auto !important;
+}
+.land-info-v8-card .land-info-flag-bg,
+.land-info-v8-card .special-info-bg {
+  position:absolute !important;
+  inset:0 !important;
+  z-index:0 !important;
+  overflow:hidden !important;
+  border-radius:8px !important;
+  pointer-events:none !important;
+}
+.land-info-v8-card .land-info-flag-bg { opacity:.72 !important; }
+.land-info-v8-card .land-info-flag-image {
+  position:absolute !important;
+  inset:-7% !important;
+  width:114% !important;
+  height:114% !important;
+  object-fit:cover !important;
+  object-position:center !important;
+  filter:blur(3.2px) saturate(.95) contrast(.97) brightness(.72) !important;
+  transform:scale(1.04) !important;
+}
+.land-info-v8-card .land-info-flag-emoji {
+  position:absolute !important; inset:0 !important; display:grid !important; place-items:center !important;
+  font-size:150px !important; filter:blur(5px) brightness(.68) !important; transform:scale(1.25) !important;
+}
+.land-info-v8-card .land-info-shade {
+  position:absolute !important; inset:0 !important; z-index:1 !important; border-radius:8px !important; pointer-events:none !important;
+  background:linear-gradient(180deg,rgba(24,27,48,.44),rgba(31,31,55,.66) 50%,rgba(28,27,49,.90)),rgba(24,26,47,.26) !important;
+}
+.land-info-v8-card .land-info-content,
+.land-info-v8-card .land-info-close { position:relative !important; z-index:4 !important; }
+.land-info-v8-card .land-info-content { padding:15px 18px 16px !important; }
+.land-info-v8-card .land-info-close {
+  position:absolute !important; top:8px !important; right:8px !important; width:30px !important; height:30px !important;
+  display:grid !important; place-items:center !important; border-radius:7px !important; border:1px solid rgba(255,255,255,.12) !important;
+  background:rgba(10,13,24,.78) !important; color:#fff !important; font-size:24px !important; line-height:1 !important;
+  cursor:pointer !important; pointer-events:auto !important;
+}
+.land-info-v8-card .land-info-close:hover { background:rgba(185,61,83,.9) !important; }
+.land-info-v8-card .land-info-country { margin:1px 34px 2px !important; text-align:center !important; color:#bfc7e8 !important; font-size:9px !important; font-weight:800 !important; letter-spacing:.13em !important; text-transform:uppercase !important; }
+.land-info-v8-card h2 { margin:1px 34px 2px !important; text-align:center !important; color:#fff !important; font-size:27px !important; line-height:1.05 !important; text-shadow:0 2px 5px rgba(0,0,0,.46) !important; }
+.land-info-v8-card .land-info-owner { margin:5px 0 10px !important; text-align:center !important; color:#b6bfd9 !important; font-size:11px !important; }
+.land-info-v8-card .land-info-owner.mortgaged { color:#ff9e9e !important; }
+.land-info-v8-card .land-rents { padding:7px 0 !important; border-top:1px solid rgba(255,255,255,.10) !important; border-bottom:1px solid rgba(255,255,255,.10) !important; }
+.land-info-v8-card .land-rent-row { display:flex !important; align-items:center !important; justify-content:space-between !important; gap:12px !important; min-height:25px !important; padding:3px 8px !important; border-radius:6px !important; color:#f4f5fb !important; font-size:12px !important; }
+.land-info-v8-card .land-rent-row.current { background:rgba(145,99,194,.26) !important; }
+.land-info-v8-card .land-info-stats { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:8px !important; padding-top:10px !important; }
+.land-info-v8-card .land-info-stats > div { text-align:center !important; }
+.land-info-v8-card .land-info-stats span { display:block !important; color:#bac0d5 !important; font-size:9px !important; }
+.land-info-v8-card .land-info-stats b { display:block !important; margin-top:2px !important; color:#fff !important; font-size:15px !important; }
+.land-info-v8-card .land-info-actions { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:7px !important; margin-top:10px !important; }
+.land-info-v8-card .land-action { min-height:45px !important; padding:8px !important; border-radius:8px !important; color:#fff !important; font-size:11px !important; font-weight:800 !important; line-height:1.1 !important; }
+.land-info-v8-card .land-action small { display:block !important; margin-top:2px !important; font-size:9px !important; opacity:.84 !important; }
+.land-info-v8-card .land-action.buy { background:linear-gradient(180deg,#468fd2,#2f6fae) !important; }
+.land-info-v8-card .land-action.build { background:linear-gradient(180deg,#3d8d6a,#2b664e) !important; }
+.land-info-v8-card .land-action.sell,.land-info-v8-card .land-action.sell-land { background:linear-gradient(180deg,#bd8329,#8a5d1c) !important; }
+.land-info-v8-card .land-action.mortgage { background:linear-gradient(180deg,#627d91,#40596c) !important; }
+.land-info-v8-card .land-action.disabled { opacity:.50 !important; cursor:not-allowed !important; }
+.land-info-v8-card .land-debt-note { margin-top:9px !important; color:#ffabab !important; font-size:10px !important; text-align:center !important; }
+
+.land-info-v8-card.special-info { width:min(330px,calc(100vw - 18px)) !important; }
+.land-info-v8-card .special-info-bg { display:grid !important; place-items:center !important; font-size:190px !important; font-weight:900 !important; opacity:.16 !important; filter:blur(1.5px) !important; transform:scale(1.08) !important; }
+.land-info-v8-card.death-info { background:linear-gradient(155deg,#241d2c,#15131d) !important; }
+.land-info-v8-card.surprise-info { background:linear-gradient(155deg,#4d2058,#24152d) !important; }
+.land-info-v8-card.treasure-info { background:linear-gradient(155deg,#51331a,#24190e) !important; }
+.land-info-v8-card .special-info-content { padding-top:18px !important; }
+.land-info-v8-card .special-info-icon { width:54px !important; height:54px !important; margin:0 auto 5px !important; display:grid !important; place-items:center !important; font-size:41px !important; line-height:1 !important; filter:drop-shadow(0 5px 8px rgba(0,0,0,.28)); }
+.land-info-v8-card .special-info-icon.surprise { color:#ff78c7 !important; font-size:50px !important; font-weight:900 !important; }
+.land-info-v8-card .special-info-lead { margin:8px 4px 11px !important; text-align:center !important; color:#d4d8e8 !important; font-size:11px !important; line-height:1.4 !important; }
+.land-info-v8-card .special-rule-list { display:grid !important; gap:6px !important; }
+.land-info-v8-card .special-rule-list > div { padding:7px 8px !important; border-radius:7px !important; background:rgba(255,255,255,.055) !important; border:1px solid rgba(255,255,255,.055) !important; }
+.land-info-v8-card .special-rule-list b { display:block !important; margin-bottom:2px !important; color:#fff !important; font-size:11px !important; }
+.land-info-v8-card .special-rule-list span { display:block !important; color:#c5cadc !important; font-size:10px !important; line-height:1.33 !important; }
+.land-info-v8-card .special-rule-list.compact > div { padding:6px 8px !important; }
+
+.land-info-v8[data-anchor="top"] .land-info-v8-card::after,
+.land-info-v8[data-anchor="bottom"] .land-info-v8-card::after,
+.land-info-v8[data-anchor="left"] .land-info-v8-card::after,
+.land-info-v8[data-anchor="right"] .land-info-v8-card::after {
+  content:"" !important; position:absolute !important; z-index:20 !important; width:0 !important; height:0 !important; filter:drop-shadow(0 2px 1px rgba(0,0,0,.28));
+}
+.land-info-v8[data-anchor="top"] .land-info-v8-card::after { top:-9px !important; left:var(--land-arrow-x) !important; transform:translateX(-50%) !important; border-left:9px solid transparent !important; border-right:9px solid transparent !important; border-bottom:9px solid #343553 !important; }
+.land-info-v8[data-anchor="bottom"] .land-info-v8-card::after { bottom:-9px !important; left:var(--land-arrow-x) !important; transform:translateX(-50%) !important; border-left:9px solid transparent !important; border-right:9px solid transparent !important; border-top:9px solid #2b2b49 !important; }
+.land-info-v8[data-anchor="left"] .land-info-v8-card::after { left:-9px !important; top:var(--land-arrow-y) !important; transform:translateY(-50%) !important; border-top:9px solid transparent !important; border-bottom:9px solid transparent !important; border-right:9px solid #343553 !important; }
+.land-info-v8[data-anchor="right"] .land-info-v8-card::after { right:-9px !important; top:var(--land-arrow-y) !important; transform:translateY(-50%) !important; border-top:9px solid transparent !important; border-bottom:9px solid transparent !important; border-left:9px solid #343553 !important; }
+
+/* =====================================================================
+   V9 — no X button + unmistakable 3-face-visible dice cubes
+   ===================================================================== */
+/* Close the info card by clicking the same land again, anywhere outside,
+   or Escape. The X is intentionally removed completely. */
+.land-info-v8-card .land-info-close,
+.land-info-v7-card .land-info-close,
+.land-info-card .land-info-close {
+  display: none !important;
+}
+
+/* Override every older die rule with one clean cube definition. */
+.center-die.die-3d.die-cube-real {
+  --v9-die: 78px;
+  --v9-half: 39px;
+  position: relative !important;
+  width: 112px !important;
+  height: 108px !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  perspective: 900px !important;
+  perspective-origin: 50% 42% !important;
+  transform: none !important;
+}
+
+.center-die.die-3d.die-cube-real .dice-cube-3d {
+  position: relative !important;
+  width: var(--v9-die) !important;
+  height: var(--v9-die) !important;
+  transform-style: preserve-3d !important;
+  -webkit-transform-style: preserve-3d !important;
+  transform-origin: 50% 50% !important;
+  will-change: transform !important;
+  filter: drop-shadow(0 17px 13px rgba(0,0,0,.46)) !important;
+}
+
+.center-die.die-3d.die-cube-real .dice-face {
+  position: absolute !important;
+  inset: 0 !important;
+  width: var(--v9-die) !important;
+  height: var(--v9-die) !important;
+  display: grid !important;
+  grid-template-columns: repeat(3,1fr) !important;
+  grid-template-rows: repeat(3,1fr) !important;
+  align-items: center !important;
+  justify-items: center !important;
+  padding: 13px !important;
+  border-radius: 15px !important;
+  border: 1px solid rgba(82,79,92,.42) !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Strongly different shading is intentional: it makes TOP/RIGHT/FRONT
+   readable as three physical faces rather than one white card. */
+.center-die.die-3d.die-cube-real .dice-face-front {
+  transform: translateZ(var(--v9-half)) !important;
+  background: linear-gradient(145deg,#ffffff 0%,#f6f5f8 58%,#dddbe3 100%) !important;
+  box-shadow: inset 5px 5px 10px rgba(255,255,255,.94), inset -8px -9px 14px rgba(74,69,83,.18) !important;
+}
+.center-die.die-3d.die-cube-real .dice-face-back {
+  transform: rotateY(180deg) translateZ(var(--v9-half)) !important;
+  background: linear-gradient(145deg,#d7d5dd,#bbb8c4) !important;
+}
+.center-die.die-3d.die-cube-real .dice-face-right {
+  transform: rotateY(90deg) translateZ(var(--v9-half)) !important;
+  background: linear-gradient(145deg,#e7e5eb 0%,#cbc8d1 58%,#aaa7b3 100%) !important;
+  box-shadow: inset 3px 3px 7px rgba(255,255,255,.55), inset -8px -8px 13px rgba(57,53,65,.22) !important;
+}
+.center-die.die-3d.die-cube-real .dice-face-left {
+  transform: rotateY(-90deg) translateZ(var(--v9-half)) !important;
+  background: linear-gradient(145deg,#eeeeF2,#c9c6d0) !important;
+}
+.center-die.die-3d.die-cube-real .dice-face-top {
+  transform: rotateX(90deg) translateZ(var(--v9-half)) !important;
+  background: linear-gradient(145deg,#ffffff 0%,#eeeef2 62%,#cbc9d2 100%) !important;
+  box-shadow: inset 4px 4px 9px rgba(255,255,255,.94), inset -6px -7px 11px rgba(70,66,78,.14) !important;
+}
+.center-die.die-3d.die-cube-real .dice-face-bottom {
+  transform: rotateX(-90deg) translateZ(var(--v9-half)) !important;
+  background: linear-gradient(145deg,#c8c5cf,#aaa7b2) !important;
+}
+
+.center-die.die-3d.die-cube-real .dice-face .pip {
+  width: 11px !important;
+  height: 11px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 34% 30%,#4b4651 0 12%,#211e27 48%,#0d0c11 100%) !important;
+  box-shadow: inset 1px 1px 2px rgba(255,255,255,.18), 0 1px 2px rgba(0,0,0,.45) !important;
+}
+
+.center-die.die-3d.die-cube-real.rolling-3d {
+  animation: v9DieLift .90s cubic-bezier(.18,.72,.22,1) !important;
+}
+@keyframes v9DieLift {
+  0%,100% { transform: translateY(0) scale(1); }
+  34% { transform: translateY(-13px) scale(1.05); }
+  77% { transform: translateY(2px) scale(.99); }
+}
+
+@media (max-width: 900px) {
+  .center-die.die-3d.die-cube-real {
+    --v9-die: 66px;
+    --v9-half: 33px;
+    width: 96px !important;
+    height: 92px !important;
+  }
+}
+
+/* =====================================================================
+   V10 — clean, isolated six-face 3D dice. No filter on the 3D subtree.
+   Old dice CSS is intentionally bypassed with rr-dice-* class names.
+   ===================================================================== */
+.center-die.rr-dice-viewport {
+  --rr-die-size: 78px;
+  --rr-die-half: 39px;
+  position: relative !important;
+  width: 122px !important;
+  height: 118px !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 122px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  perspective: 720px !important;
+  perspective-origin: 50% 42% !important;
+  transform-style: preserve-3d !important;
+  -webkit-transform-style: preserve-3d !important;
+}
+
+/* The shadow is a sibling of the entire 3D subtree, so it can never flatten it. */
+.rr-dice-ground-shadow {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  bottom: 7px;
+  width: 80px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.42);
+  box-shadow: 0 8px 20px rgba(0,0,0,.34);
+  transform: translateX(-50%) scaleX(.92);
+  opacity: .76;
+  pointer-events: none;
+}
+
+.rr-dice-stage {
+  position: relative;
+  z-index: 2;
+  width: var(--rr-die-size);
+  height: var(--rr-die-size);
+  display: block;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform: translate3d(0,0,0) scale(1);
+  overflow: visible;
+  filter: none !important;
+}
+
+/* Permanent camera/view tilt. This is separate from the result rotation. */
+.rr-dice-view {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform: rotateX(-22deg) rotateY(30deg) rotateZ(-3deg);
+  transform-origin: 50% 50%;
+  overflow: visible;
+  filter: none !important;
+}
+
+#die2 .rr-dice-view {
+  transform: rotateX(-19deg) rotateY(-31deg) rotateZ(4deg);
+}
+
+.rr-dice-cube {
+  position: absolute;
+  inset: 0;
+  width: var(--rr-die-size);
+  height: var(--rr-die-size);
+  transform-style: preserve-3d !important;
+  -webkit-transform-style: preserve-3d !important;
+  transform-origin: 50% 50% 0;
+  overflow: visible !important;
+  filter: none !important;
+  opacity: 1 !important;
+  will-change: transform;
+}
+
+.rr-dice-face {
+  position: absolute;
+  inset: 0;
+  width: var(--rr-die-size);
+  height: var(--rr-die-size);
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  grid-template-rows: repeat(3,1fr);
+  align-items: center;
+  justify-items: center;
+  padding: 13px;
+  box-sizing: border-box;
+  border-radius: 15px;
+  border: 1px solid rgba(91,87,102,.34);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+/* Each side is physically translated half a cube depth. */
+.rr-dice-face-front  { transform: translateZ(var(--rr-die-half)); }
+.rr-dice-face-back   { transform: rotateY(180deg) translateZ(var(--rr-die-half)); }
+.rr-dice-face-right  { transform: rotateY(90deg) translateZ(var(--rr-die-half)); }
+.rr-dice-face-left   { transform: rotateY(-90deg) translateZ(var(--rr-die-half)); }
+.rr-dice-face-top    { transform: rotateX(90deg) translateZ(var(--rr-die-half)); }
+.rr-dice-face-bottom { transform: rotateX(-90deg) translateZ(var(--rr-die-half)); }
+
+/* Directional lighting makes the three visible planes unmistakable. */
+.rr-dice-face-front {
+  background: linear-gradient(145deg,#ffffff 0%,#f5f4f7 55%,#dad8e0 100%);
+  box-shadow:
+    inset 6px 6px 12px rgba(255,255,255,.92),
+    inset -8px -9px 15px rgba(64,59,72,.19);
+}
+.rr-dice-face-back {
+  background: linear-gradient(145deg,#d5d2db,#b4b0bc);
+}
+.rr-dice-face-right {
+  background: linear-gradient(145deg,#dedce4 0%,#c4c0cb 56%,#a39fab 100%);
+  box-shadow:
+    inset 4px 4px 8px rgba(255,255,255,.48),
+    inset -9px -9px 14px rgba(54,50,61,.24);
+}
+.rr-dice-face-left {
+  background: linear-gradient(145deg,#eceaf0,#c8c4ce 66%,#ada9b4);
+}
+.rr-dice-face-top {
+  background: linear-gradient(145deg,#ffffff 0%,#f1f0f4 58%,#c8c5cf 100%);
+  box-shadow:
+    inset 5px 5px 10px rgba(255,255,255,.95),
+    inset -6px -7px 12px rgba(65,61,72,.14);
+}
+.rr-dice-face-bottom {
+  background: linear-gradient(145deg,#c6c2cc,#aaa6b1);
+}
+
+.rr-dice-pip {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%,#4c4652 0 12%,#211e27 49%,#0c0b10 100%);
+  box-shadow:
+    inset 1px 1px 2px rgba(255,255,255,.20),
+    0 1px 2px rgba(0,0,0,.48);
+}
+
+.rr-dice-is-rolling .rr-dice-ground-shadow {
+  animation: rrDiceShadow 920ms cubic-bezier(.18,.72,.20,1);
+}
+@keyframes rrDiceShadow {
+  0%,100% { transform: translateX(-50%) scaleX(.92); opacity:.76; }
+  34% { transform: translateX(-50%) scaleX(.58); opacity:.34; }
+  78% { transform: translateX(-50%) scaleX(.82); opacity:.60; }
+}
+
+@media (max-width: 900px) {
+  .center-die.rr-dice-viewport {
+    --rr-die-size: 66px;
+    --rr-die-half: 33px;
+    width: 104px !important;
+    height: 102px !important;
+    flex-basis: 104px !important;
+  }
+  .rr-dice-face { padding: 11px; border-radius: 13px; }
+  .rr-dice-pip { width: 9px; height: 9px; }
+}
+
+/* =====================================================================
+   V11 — Richup-style TOP-DOWN dice + mathematically centered dice pair.
+   The result is read from the upper face. The side faces only provide depth.
+   ===================================================================== */
+
+/* Do not put CSS filters on an ancestor of the preserve-3d tree. */
+#lobbyBoard .lobby-center .center-dice {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-columns: 122px 122px !important;
+  grid-auto-flow: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  column-gap: 22px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 0 !important;
+  position: relative !important;
+  left: 0 !important;
+  right: 0 !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.center-die.rr-dice-viewport {
+  width: 122px !important;
+  height: 124px !important;
+  flex: none !important;
+  justify-self: center !important;
+  align-self: center !important;
+  perspective: 920px !important;
+  perspective-origin: 50% 36% !important;
+}
+
+/* Mostly-above camera: broad top face, with just enough side/front for depth. */
+#die1 .rr-dice-view {
+  transform: rotateX(-61deg) rotateY(17deg) rotateZ(-4deg) !important;
+}
+#die2 .rr-dice-view {
+  transform: rotateX(-61deg) rotateY(-17deg) rotateZ(4deg) !important;
+}
+
+/* Make the top the brightest/read-first plane, like dice viewed on a table. */
+.rr-dice-face-top {
+  background: linear-gradient(145deg,#ffffff 0%,#faf9fb 58%,#e1dfe6 100%) !important;
+  box-shadow:
+    inset 6px 6px 12px rgba(255,255,255,.96),
+    inset -5px -6px 10px rgba(61,57,68,.11) !important;
+}
+.rr-dice-face-front {
+  background: linear-gradient(145deg,#eceaf0 0%,#d9d6df 58%,#bebac6 100%) !important;
+}
+.rr-dice-face-right,
+.rr-dice-face-left {
+  background: linear-gradient(145deg,#e1dfe6 0%,#cbc7d2 58%,#aaa6b2 100%) !important;
+}
+
+/* Ground shadow stays centered under each cube and outside the 3D subtree. */
+.rr-dice-ground-shadow {
+  left: 50% !important;
+  bottom: 2px !important;
+  width: 74px !important;
+  height: 19px !important;
+  transform: translateX(-50%) scaleX(.92) !important;
+}
+
+@media (max-width: 900px) {
+  #lobbyBoard .lobby-center .center-dice {
+    grid-template-columns: 104px 104px !important;
+    column-gap: 16px !important;
+  }
+  .center-die.rr-dice-viewport {
+    width: 104px !important;
+    height: 106px !important;
+  }
+}
+
+
+/* ======================================================================
+   V11.1 — country flag chip exact-style fix
+   Goal: make the small round country flags sit HALF OUTSIDE the tile,
+   centered on the edge exactly like the reference screenshots.
+   ====================================================================== */
+
+/* Never clip the country chip */
+.room-tile,
+.board-space,
+.board-space > .room-tile {
+  overflow: visible !important;
+}
+
+/* Shared country chip look */
+.room-tile .rt-flag {
+  position: absolute !important;
+  z-index: 40 !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  background: #ffffff !important;
+  box-shadow:
+    0 0 0 1.5px rgba(255,255,255,.96),
+    0 2px 6px rgba(0,0,0,.62) !important;
+}
+.room-tile .rt-flag.rt-img img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+  border-radius: 999px !important;
+}
+.room-tile .rt-flag.rt-code {
+  color: #f3fbff !important;
+  background: rgba(9,16,24,.9) !important;
+  font-size: 7px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+/* TOP row: chip hangs below the tile */
+.room-tile.edge-top .rt-flag {
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: -9px !important;
+  transform: translateX(-50%) !important;
+}
+
+/* BOTTOM row: chip hangs above the tile */
+.room-tile.edge-bottom .rt-flag {
+  left: 50% !important;
+  right: auto !important;
+  top: -9px !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+}
+
+/* LEFT column: chip hangs to the right of the tile */
+.room-tile.edge-left .rt-flag {
+  left: auto !important;
+  right: -9px !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+}
+
+/* RIGHT column: chip hangs to the left of the tile */
+.room-tile.edge-right .rt-flag {
+  left: -9px !important;
+  right: auto !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+}
+
+/* Keep the text readable and leave room for the half-outside chip */
+.room-tile.edge-top .rt-name,
+.room-tile.edge-top .rt-icon,
+.room-tile.edge-top .rt-price { margin-bottom: 8px !important; }
+.room-tile.edge-bottom .rt-name,
+.room-tile.edge-bottom .rt-icon,
+.room-tile.edge-bottom .rt-price { margin-top: 8px !important; }
+.room-tile.edge-left .rt-name,
+.room-tile.edge-left .rt-icon,
+.room-tile.edge-left .rt-price { margin-right: 8px !important; }
+.room-tile.edge-right .rt-name,
+.room-tile.edge-right .rt-icon,
+.room-tile.edge-right .rt-price { margin-left: 8px !important; }
+
+/* Side-column tiles: keep the chip visually attached to the tile edge, not
+   pushed away by older vertical-layout rules. */
+.room-tile.edge-left,
+.room-tile.edge-right {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+/* City-land chips should always stay above ownership overlays */
+.room-tile.land-city .rt-flag,
+.room-tile.owned .rt-flag {
+  z-index: 48 !important;
+}
+
+
+/* ======================================================================
+   V11.2 — flag-chip tile coverage + seam fix
+   - remove inner black seam / line artifacts
+   - make blur/overlay cover the entire tile
+   - keep rounded corners clean
+   ====================================================================== */
+
+/* Let visual layers reach the exact tile edge. */
+.room-tile {
+  background-clip: padding-box !important;
+  box-sizing: border-box !important;
+}
+
+.room-tile .rt-land-bg,
+.room-tile .rt-land-dim,
+.room-tile .rt-land-bg img,
+.room-tile.owned::after {
+  border-radius: inherit !important;
+}
+
+/* The blurred country background should fill the full tile, not stop short
+   and leave dark seams around the edges. */
+.room-tile .rt-land-bg,
+.room-tile .rt-land-dim {
+  inset: 0 !important;
+}
+.room-tile .rt-land-bg {
+  overflow: hidden !important;
+  opacity: .72 !important;
+  transform: none !important;
+}
+.room-tile .rt-land-bg img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+  filter: blur(7px) saturate(1.02) contrast(.98) brightness(.92) !important;
+  transform: scale(1.14) !important;
+}
+.room-tile .rt-land-dim {
+  background:
+    linear-gradient(180deg, rgba(96,106,122,.22), rgba(28,36,48,.42)),
+    rgba(20,27,36,.12) !important;
+  backdrop-filter: blur(.55px) !important;
+}
+
+/* Owned land glow/blur should visually cover the whole tile with no inset gaps. */
+.room-tile.owned {
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb,var(--owner-color) 88%,white 12%),
+    inset 0 0 26px color-mix(in srgb,var(--owner-color) 38%,transparent),
+    0 2px 8px rgba(0,0,0,.52) !important;
+}
+.room-tile.owned::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  opacity: .95 !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 0 12px color-mix(in srgb,var(--owner-color) 55%,transparent) !important;
+}
+.room-tile.owned.edge-top::after {
+  background: linear-gradient(180deg,
+    color-mix(in srgb,var(--owner-color) 70%,white 10%) 0%,
+    color-mix(in srgb,var(--owner-color) 28%,transparent) 42%,
+    rgba(0,0,0,0) 100%) !important;
+}
+.room-tile.owned.edge-bottom::after {
+  background: linear-gradient(0deg,
+    color-mix(in srgb,var(--owner-color) 70%,white 10%) 0%,
+    color-mix(in srgb,var(--owner-color) 28%,transparent) 42%,
+    rgba(0,0,0,0) 100%) !important;
+}
+.room-tile.owned.edge-left::after {
+  background: linear-gradient(90deg,
+    color-mix(in srgb,var(--owner-color) 70%,white 10%) 0%,
+    color-mix(in srgb,var(--owner-color) 28%,transparent) 42%,
+    rgba(0,0,0,0) 100%) !important;
+}
+.room-tile.owned.edge-right::after {
+  background: linear-gradient(270deg,
+    color-mix(in srgb,var(--owner-color) 70%,white 10%) 0%,
+    color-mix(in srgb,var(--owner-color) 28%,transparent) 42%,
+    rgba(0,0,0,0) 100%) !important;
+}
+
+
+/* =====================================================================
+   V11.3 — FINAL board cleanup
+   - chips stay above the center panel
+   - blur covers full land tiles
+   - special side tiles get their own clean layout
+   - dice shadow shows only while rolling
+   ===================================================================== */
+
+.lobby-board {
+  overflow: visible !important;
+  isolation: isolate !important;
+}
+
+.lobby-center {
+  position: relative !important;
+  z-index: 1 !important;
+  box-sizing: border-box !important;
+}
+
+.room-tile {
+  z-index: 5 !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+  box-sizing: border-box !important;
+  background-clip: padding-box !important;
+}
+.room-tile.corner { z-index: 6 !important; }
+
+.room-tile .rt-land-bg,
+.room-tile .rt-land-dim,
+.room-tile.owned::after {
+  inset: 0 !important;
+  border-radius: inherit !important;
+}
+.room-tile .rt-land-bg {
+  opacity: .76 !important;
+  overflow: hidden !important;
+}
+.room-tile .rt-land-bg img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  display: block !important;
+  filter: blur(8px) saturate(1.02) contrast(.98) brightness(.90) !important;
+  transform: scale(1.16) !important;
+}
+.room-tile .rt-land-dim {
+  background:
+    linear-gradient(180deg, rgba(96,106,122,.20), rgba(28,36,48,.38)),
+    rgba(20,27,36,.10) !important;
+  backdrop-filter: blur(.55px) !important;
+}
+
+/* Flag chips: keep them half outside, centered on the tile edge, and above
+   both the center board and ownership overlays. */
+.room-tile.has-flag-chip .rt-flag {
+  z-index: 60 !important;
+}
+.room-tile.edge-top.has-flag-chip .rt-name,
+.room-tile.edge-top.has-flag-chip .rt-icon,
+.room-tile.edge-top.has-flag-chip .rt-price {
+  margin-bottom: 10px !important;
+}
+.room-tile.edge-bottom.has-flag-chip .rt-name,
+.room-tile.edge-bottom.has-flag-chip .rt-icon,
+.room-tile.edge-bottom.has-flag-chip .rt-price {
+  margin-top: 10px !important;
+}
+.room-tile.edge-left.has-flag-chip .rt-name,
+.room-tile.edge-left.has-flag-chip .rt-icon,
+.room-tile.edge-left.has-flag-chip .rt-price {
+  margin-right: 10px !important;
+}
+.room-tile.edge-right.has-flag-chip .rt-name,
+.room-tile.edge-right.has-flag-chip .rt-icon,
+.room-tile.edge-right.has-flag-chip .rt-price {
+  margin-left: 10px !important;
+}
+
+/* Clean top/bottom special tiles so the icon stays in the visible tile area. */
+.room-tile.row-special {
+  padding: 4px 3px !important;
+  gap: 2px !important;
+}
+.room-tile.row-special .rt-price,
+.room-tile.row-special .rt-icon,
+.room-tile.row-special .rt-name {
+  margin: 0 !important;
+  writing-mode: horizontal-tb !important;
+}
+.room-tile.edge-top.row-special .rt-price { order: 0 !important; }
+.room-tile.edge-top.row-special .rt-icon  { order: 1 !important; }
+.room-tile.edge-top.row-special .rt-name  { order: 2 !important; }
+.room-tile.edge-bottom.row-special .rt-icon  { order: 0 !important; }
+.room-tile.edge-bottom.row-special .rt-name  { order: 1 !important; }
+.room-tile.edge-bottom.row-special .rt-price { order: 2 !important; }
+.room-tile.row-special .rt-icon {
+  font-size: clamp(14px, 1.5vw, 20px) !important;
+  line-height: 1 !important;
+}
+.room-tile.row-special .rt-name {
+  font-size: clamp(6.7px, 0.62vw, 8.6px) !important;
+  line-height: 1.02 !important;
+}
+.room-tile.row-special .rt-price {
+  font-size: clamp(7px, 0.7vw, 10px) !important;
+}
+
+/* Side special tiles (airport / tax / companies / death valley) need their own
+   layout; the generic city-side vertical layout clips icons and text. */
+.room-tile.side-special {
+  display: block !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  padding: 0 !important;
+  gap: 0 !important;
+}
+.room-tile.side-special .rt-price,
+.room-tile.side-special .rt-icon,
+.room-tile.side-special .rt-name {
+  position: absolute !important;
+  margin: 0 !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  line-height: 1 !important;
+  max-width: none !important;
+}
+.room-tile.side-special.edge-left .rt-price,
+.room-tile.side-special.edge-right .rt-price {
+  top: 50% !important;
+  font-size: 9.5px !important;
+  color: #d6ebf7 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.65) !important;
+  writing-mode: vertical-rl !important;
+  text-orientation: mixed !important;
+}
+.room-tile.side-special.edge-left .rt-price {
+  left: 4px !important;
+  transform: translateY(-50%) rotate(180deg) !important;
+}
+.room-tile.side-special.edge-right .rt-price {
+  right: 4px !important;
+  transform: translateY(-50%) !important;
+}
+.room-tile.side-special .rt-icon {
+  left: 50% !important;
+  top: 9px !important;
+  transform: translateX(-50%) !important;
+  font-size: 15px !important;
+  line-height: 1 !important;
+  filter: none !important;
+}
+.room-tile.side-special.tint-deathvalley .rt-icon {
+  top: 8px !important;
+  font-size: 17px !important;
+}
+.room-tile.side-special .rt-name {
+  top: 50% !important;
+  width: 50px !important;
+  font-size: 7.7px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+  color: #eff7fb !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.74) !important;
+}
+.room-tile.side-special.edge-left .rt-name {
+  left: 51% !important;
+  transform: translate(-50%, -50%) rotate(90deg) !important;
+}
+.room-tile.side-special.edge-right .rt-name {
+  left: 49% !important;
+  transform: translate(-50%, -50%) rotate(-90deg) !important;
+}
+/* The generic side-tile chip spacing must not affect special tiles that have no chip. */
+.room-tile.side-special .rt-name,
+.room-tile.side-special .rt-icon,
+.room-tile.side-special .rt-price {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Dice shadow only during the roll animation. */
+.rr-dice-ground-shadow {
+  opacity: 0 !important;
+}
+.rr-dice-is-rolling .rr-dice-ground-shadow {
+  opacity: .76 !important;
+}
+
+/* ==========================================================================
+   Requested follow-up patch
+   - swap requested countries/cities without breaking working systems
+   - keep side special tiles readable
+   - icons for airports / companies / taxes stay INSIDE the tile but toward
+     the outside edge, with the name following them
+   ========================================================================== */
+
+.room-tile.side-special {
+  overflow: hidden !important;
+}
+
+/* Narrower, cleaner side-special text so it stays inside the tile. */
+.room-tile.side-special .rt-name {
+  width: 38px !important;
+  font-size: 7px !important;
+  line-height: 1.03 !important;
+}
+.room-tile.side-special.edge-left .rt-name {
+  left: 56% !important;
+  top: 53% !important;
+  transform: translate(-50%, -50%) rotate(90deg) !important;
+}
+.room-tile.side-special.edge-right .rt-name {
+  left: 44% !important;
+  top: 53% !important;
+  transform: translate(-50%, -50%) rotate(-90deg) !important;
+}
+
+/* Keep prices readable on the outer edge. */
+.room-tile.side-special.edge-left .rt-price {
+  left: 4px !important;
+}
+.room-tile.side-special.edge-right .rt-price {
+  right: 4px !important;
+}
+
+/* Put the icon INSIDE the tile, but biased toward the OUTSIDE edge. */
+.room-tile.side-special.edge-left .rt-icon,
+.room-tile.side-special.edge-right .rt-icon {
+  top: 10px !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+.room-tile.side-special.edge-left .rt-icon {
+  left: 11px !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+}
+.room-tile.side-special.edge-right .rt-icon {
+  left: auto !important;
+  right: 11px !important;
+  transform: translateX(50%) !important;
+}
+
+/* Death Valley can stay slightly larger but must still stay inside. */
+.room-tile.side-special.tint-deathvalley.edge-left .rt-icon,
+.room-tile.side-special.tint-deathvalley.edge-right .rt-icon {
+  top: 9px !important;
+  font-size: 16px !important;
+}
+
+/* ========================================================================
+   FINAL TARGETED VISUAL FIX
+   Only board presentation is changed here. Gameplay / commands / buildings /
+   dice logic / popups are untouched.
+   ======================================================================== */
+
+/* ---------- COUNTRY FLAG CHIPS ---------- */
+/* Keep the city itself clean; reserve a little room for the chip instead of
+   pushing every child around with margins. */
+.room-tile.has-flag-chip .rt-name,
+.room-tile.has-flag-chip .rt-price,
+.room-tile.has-flag-chip .rt-icon {
+  margin: 0 !important;
+}
+.room-tile.land-city.edge-top    { padding-bottom: 9px !important; }
+.room-tile.land-city.edge-bottom { padding-top: 9px !important; }
+.room-tile.land-city.edge-left   { padding-right: 9px !important; }
+.room-tile.land-city.edge-right  { padding-left: 9px !important; }
+
+/* One identical chip for every country. */
+.room-tile.has-flag-chip .rt-flag {
+  position: absolute !important;
+  z-index: 100 !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  background: #fff !important;
+  border: 0 !important;
+  box-shadow:
+    0 0 0 1.5px rgba(255,255,255,.98),
+    0 2px 5px rgba(0,0,0,.52) !important;
+}
+.room-tile.has-flag-chip .rt-flag.rt-img img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  border-radius: 999px !important;
+  transform: none !important;
+  filter: none !important;
+}
+.room-tile.has-flag-chip .rt-flag.rt-code {
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  color: #eef7fb !important;
+  background: #111820 !important;
+}
+
+/* Half inside / half outside, always on the INNER edge of the board. */
+.room-tile.edge-top.has-flag-chip .rt-flag {
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: -11px !important;
+  transform: translateX(-50%) !important;
+}
+.room-tile.edge-bottom.has-flag-chip .rt-flag {
+  left: 50% !important;
+  right: auto !important;
+  top: -11px !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+}
+.room-tile.edge-left.has-flag-chip .rt-flag {
+  left: auto !important;
+  right: -11px !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+}
+.room-tile.edge-right.has-flag-chip .rt-flag {
+  left: -11px !important;
+  right: auto !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+}
+
+/* Flag chips must be allowed to overlap the center cleanly. */
+.lobby-board,
+.room-tile.land-city {
+  overflow: visible !important;
+}
+.lobby-center { z-index: 1 !important; }
+.room-tile.land-city { z-index: 8 !important; }
+.room-tile.land-city .rt-flag { z-index: 100 !important; }
+
+/* ---------- SPECIAL TILES: SAME LOGIC ON EVERY BOARD EDGE ---------- */
+/* Rule used by the reference:
+   OUTER EDGE = price
+   MIDDLE     = name
+   INNER EDGE = icon
+   Bottom/top rows use the same ordering vertically. */
+
+/* Row specials */
+.room-tile.row-special {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1px !important;
+  padding: 4px 3px !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  overflow: hidden !important;
+}
+.room-tile.row-special .rt-price,
+.room-tile.row-special .rt-name,
+.room-tile.row-special .rt-icon {
+  position: static !important;
+  margin: 0 !important;
+  transform: none !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  text-align: center !important;
+}
+/* top: outer is top => price, name, icon */
+.room-tile.edge-top.row-special .rt-price { order: 0 !important; }
+.room-tile.edge-top.row-special .rt-name  { order: 1 !important; }
+.room-tile.edge-top.row-special .rt-icon  { order: 2 !important; }
+/* bottom: outer is bottom => icon, name, price */
+.room-tile.edge-bottom.row-special .rt-icon  { order: 0 !important; }
+.room-tile.edge-bottom.row-special .rt-name  { order: 1 !important; }
+.room-tile.edge-bottom.row-special .rt-price { order: 2 !important; }
+.room-tile.row-special .rt-icon {
+  font-size: clamp(15px,1.55vw,22px) !important;
+  line-height: 1 !important;
+}
+.room-tile.row-special .rt-name {
+  max-width: 100% !important;
+  font-size: clamp(6.6px,.62vw,8.8px) !important;
+  line-height: 1.02 !important;
+  white-space: normal !important;
+}
+.room-tile.row-special .rt-price {
+  font-size: clamp(7px,.69vw,9.8px) !important;
+  line-height: 1 !important;
+}
+
+/* Side specials are a rotated version of that same visual order:
+   left  = price at far left, name in middle, icon at inner/right
+   right = icon at inner/left, name in middle, price at far right */
+.room-tile.side-special {
+  display: block !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  overflow: hidden !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+}
+.room-tile.side-special .rt-price,
+.room-tile.side-special .rt-name,
+.room-tile.side-special .rt-icon {
+  position: absolute !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  text-align: center !important;
+  max-width: none !important;
+}
+
+/* LEFT COLUMN */
+.room-tile.side-special.edge-left .rt-price {
+  left: 5px !important;
+  right: auto !important;
+  top: 50% !important;
+  transform: translateY(-50%) rotate(180deg) !important;
+  writing-mode: vertical-rl !important;
+  font-size: 8.6px !important;
+}
+.room-tile.side-special.edge-left .rt-name {
+  left: 48% !important;
+  right: auto !important;
+  top: 50% !important;
+  width: 48px !important;
+  transform: translate(-50%,-50%) rotate(90deg) !important;
+  font-size: 7.35px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+}
+.room-tile.side-special.edge-left .rt-icon {
+  left: auto !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 15px !important;
+}
+
+/* RIGHT COLUMN */
+.room-tile.side-special.edge-right .rt-price {
+  left: auto !important;
+  right: 5px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  writing-mode: vertical-rl !important;
+  font-size: 8.6px !important;
+}
+.room-tile.side-special.edge-right .rt-name {
+  left: 52% !important;
+  right: auto !important;
+  top: 50% !important;
+  width: 48px !important;
+  transform: translate(-50%,-50%) rotate(-90deg) !important;
+  font-size: 7.35px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+}
+.room-tile.side-special.edge-right .rt-icon {
+  left: 8px !important;
+  right: auto !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 15px !important;
+}
+
+/* Larger skull/question glyphs, still fully inside the tile. */
+.room-tile.side-special.tint-deathvalley .rt-icon {
+  font-size: 17px !important;
+}
+.room-tile.side-special.tint-surprise .rt-icon {
+  font-size: 18px !important;
+}
+
+/* No accidental side-column writing-mode should leak into special children. */
+.room-tile.side-special .rt-icon,
+.room-tile.side-special .rt-name,
+.room-tile.side-special .rt-price {
+  text-orientation: mixed !important;
+}
+
+/* Do not alter dice / gameplay; only keep the already-requested shadow rule. */
+.rr-dice-ground-shadow { opacity: 0 !important; }
+.rr-dice-is-rolling .rr-dice-ground-shadow { opacity: .76 !important; }
+
+
+/* =====================================================================
+   V11.4 — Iraq swap, centered actions, realer settings UI, face players
+   ===================================================================== */
+.player-face,
+.room-player-avatar.player-face,
+.g-avatar.player-face,
+.g-token {
+  --player-color: #69c7e5;
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: radial-gradient(circle at 38% 34%, #f7d14c 0%, #e4b733 70%, #c99319 100%) !important;
+  border: 2px solid color-mix(in srgb, var(--player-color) 78%, white 22%) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.82),
+    0 3px 8px rgba(0,0,0,.48),
+    0 0 10px color-mix(in srgb, var(--player-color) 50%, transparent) !important;
+  color: transparent !important;
+  text-indent: -9999px !important;
+}
+.player-face::before,
+.room-player-avatar.player-face::before,
+.g-avatar.player-face::before,
+.g-token::before,
+.player-face::after,
+.room-player-avatar.player-face::after,
+.g-avatar.player-face::after,
+.g-token::after {
+  content: '';
+  position: absolute;
+  top: 44%;
+  width: 22%;
+  height: 22%;
+  border-radius: 999px;
+  background: #fff;
+}
+.player-face::before,
+.room-player-avatar.player-face::before,
+.g-avatar.player-face::before,
+.g-token::before { left: 24%; }
+.player-face::after,
+.room-player-avatar.player-face::after,
+.g-avatar.player-face::after,
+.g-token::after { right: 24%; }
+.player-face[data-look="left"]::before, .g-token[data-look="left"]::before,
+.player-face[data-look="left"]::after, .g-token[data-look="left"]::after { box-shadow: inset 3px 0 0 #222; }
+.player-face[data-look="right"]::before, .g-token[data-look="right"]::before,
+.player-face[data-look="right"]::after, .g-token[data-look="right"]::after { box-shadow: inset -3px 0 0 #222; }
+.player-face[data-look="up"]::before, .g-token[data-look="up"]::before,
+.player-face[data-look="up"]::after, .g-token[data-look="up"]::after { box-shadow: inset 0 3px 0 #222; }
+.player-face[data-look="down"]::before, .g-token[data-look="down"]::before,
+.player-face[data-look="down"]::after, .g-token[data-look="down"]::after { box-shadow: inset 0 -3px 0 #222; }
+.room-player-row .room-player-avatar.player-face { width: 34px !important; height: 34px !important; }
+.g-avatar.player-face { width: 27px !important; height: 27px !important; }
+.rt-tokens .g-token {
+  width: clamp(16px,1.15vw,20px) !important;
+  height: clamp(16px,1.15vw,20px) !important;
+  margin: 0 !important;
+  border-width: 1.6px !important;
+}
+.g-token-mover { width: 26px !important; height: 26px !important; }
+.room-setting .room-select { min-width: 84px; }
+.land-info-actions {
+  grid-template-columns: 1fr !important;
+  justify-items: center !important;
+  gap: 10px !important;
+}
+.land-info-v8-card .land-action,
+.land-info-v7-card .land-action,
+.land-action {
+  width: min(100%, 178px) !important;
+  justify-self: center !important;
+  text-align: center !important;
+}
+.land-info-v8-card .land-action.mortgage,
+.land-info-v7-card .land-action.mortgage,
+.land-action.mortgage {
+  background: linear-gradient(180deg,#e7ba49,#ba8418) !important;
+  color:#fff !important;
+}
+.land-info-v8-card .land-action.sell,
+.land-info-v8-card .land-action.sell-land,
+.land-info-v7-card .land-action.sell,
+.land-info-v7-card .land-action.sell-land,
+.land-action.sell,
+.land-action.sell-land {
+  background: linear-gradient(180deg,#d95757,#a92f2f) !important;
+  color:#fff !important;
+}
+.room-tile .rt-name { word-break: break-word; }
+
+
+/* =====================================================================
+   V11.5 — RESTORE ORIGINAL CONTINUOUS PLAYER FLIGHT
+   The previous face patch accidentally stole .g-token::before/::after and
+   set overflow:hidden, which clipped/replaced the Richup motion trail.
+   Faces now use a child element, leaving the flight pseudo-elements intact.
+   ===================================================================== */
+
+/* Undo the accidental generic face overrides only for board tokens. */
+.g-token.face-token {
+  --player-color: #69c7e5;
+  position: relative !important;
+  overflow: visible !important;
+  border-radius: 999px !important;
+  background: radial-gradient(circle at 38% 34%, #f7d14c 0%, #e4b733 70%, #c99319 100%) !important;
+  border: 2px solid color-mix(in srgb, var(--player-color) 78%, white 22%) !important;
+  color: transparent !important;
+  text-indent: 0 !important;
+}
+
+/* The static token can stay tidy; the flying token MUST remain overflow-visible
+   so the original motion-blur trail is not cut off. */
+.rt-tokens .g-token.face-token:not(.g-token-mover) {
+  overflow: hidden !important;
+}
+.g-token-mover.face-token {
+  overflow: visible !important;
+  will-change: left, top, transform, filter, opacity !important;
+}
+
+/* Face eyes live in a real child now, not ::before/::after. */
+.g-token.face-token .token-face-eyes {
+  position: absolute;
+  inset: 0;
+  display: block;
+  z-index: 3;
+  pointer-events: none;
+}
+.g-token.face-token .token-face-eyes::before,
+.g-token.face-token .token-face-eyes::after {
+  content: '';
+  position: absolute;
+  top: 42%;
+  width: 24%;
+  height: 24%;
+  border-radius: 999px;
+  background: radial-gradient(circle at 50% 50%, #222 0 34%, #fff 38% 100%);
+}
+.g-token.face-token .token-face-eyes::before { left: 22%; }
+.g-token.face-token .token-face-eyes::after  { right: 22%; }
+
+.g-token.face-token[data-look="right"] .token-face-eyes::before,
+.g-token.face-token[data-look="right"] .token-face-eyes::after {
+  background: radial-gradient(circle at 68% 50%, #222 0 34%, #fff 38% 100%);
+}
+.g-token.face-token[data-look="left"] .token-face-eyes::before,
+.g-token.face-token[data-look="left"] .token-face-eyes::after {
+  background: radial-gradient(circle at 32% 50%, #222 0 34%, #fff 38% 100%);
+}
+.g-token.face-token[data-look="up"] .token-face-eyes::before,
+.g-token.face-token[data-look="up"] .token-face-eyes::after {
+  background: radial-gradient(circle at 50% 32%, #222 0 34%, #fff 38% 100%);
+}
+.g-token.face-token[data-look="down"] .token-face-eyes::before,
+.g-token.face-token[data-look="down"] .token-face-eyes::after {
+  background: radial-gradient(circle at 50% 68%, #222 0 34%, #fff 38% 100%);
+}
+
+/* Restore the mover's original trail/shadow pseudo-elements after the generic
+   face rules that appeared later in the stylesheet. */
+.g-token-mover.face-token.flight::before {
+  content: '' !important;
+  position: absolute !important;
+  right: 50% !important;
+  left: auto !important;
+  top: 50% !important;
+  width: 42px !important;
+  height: 9px !important;
+  transform: translateY(-50%) rotate(var(--flight-angle, 0deg)) !important;
+  transform-origin: 100% 50% !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--flight-color, #7ddcff) 34%, transparent) 45%, var(--flight-color, #7ddcff) 100%) !important;
+  filter: blur(4px) !important;
+  opacity: .75 !important;
+  z-index: -1 !important;
+  box-shadow: none !important;
+}
+.g-token-mover.face-token.flight::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 2px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.20) !important;
+  z-index: 1 !important;
+  box-shadow: none !important;
+}
+.g-token-ghost.face-token::before,
+.g-token-ghost.face-token::after {
+  display: none !important;
+}
+
+/* =====================================================================
+   V11.6 — REAL old movement restore
+   IMPORTANT: the face patch above set every .g-token to position:relative
+   with !important. That overrode the flying mover's original fixed position,
+   so the Web Animations API changed left/top without producing the old
+   across-the-board flight. Restore the mover AFTER all face rules.
+   ===================================================================== */
+.g-token.g-token-mover,
+.g-token.g-token-mover.face-token,
+.g-token.g-token-mover.g-token-ghost,
+.g-token.g-token-mover.face-token.g-token-ghost {
+  position: fixed !important;
+  z-index: 120000 !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+  transform-origin: center center !important;
+  will-change: left, top, transform, filter, opacity !important;
+  overflow: visible !important;
+}
+
+/* Keep the moving piece visually above the board for the entire old flight. */
+.g-token.g-token-mover.flight {
+  display: inline-grid !important;
+  visibility: visible !important;
+  opacity: 1;
+}
+
+/* Ghost copies are the old RichUp-like motion blur trail. */
+.g-token.g-token-mover.g-token-ghost {
+  position: fixed !important;
+  pointer-events: none !important;
+  z-index: 119999 !important;
+}
+
+
+/* ===== Ownership land mark restore (requested) =====
+   Exact-style land mark: when a tile is owned, the price area becomes a clean
+   rounded ownership block on the OUTER edge, like the Jerusalem reference.
+   No number chip here; the player token remains the separate moving piece. ===== */
+.room-tile.owned::after {
+  content: none !important;
+}
+
+.room-tile .rt-owner-mark {
+  position: absolute;
+  z-index: 42;
+  pointer-events: none;
+  border-radius: 9px;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--owner-color, #8bc34a) 72%, white 28%) 0%,
+      color-mix(in srgb, var(--owner-color, #8bc34a) 88%, black 12%) 100%);
+  border: 1px solid color-mix(in srgb, var(--owner-color, #8bc34a) 70%, white 30%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.30),
+    inset 0 -1px 0 rgba(0,0,0,.10),
+    0 0 10px color-mix(in srgb, var(--owner-color, #8bc34a) 32%, transparent),
+    0 2px 5px rgba(0,0,0,.18);
+}
+.room-tile .rt-owner-mark::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0));
+}
+.room-tile .rt-owner-chip {
+  display: none !important;
+}
+
+.room-tile.owned.edge-top .rt-owner-mark {
+  top: 5px;
+  left: 3px;
+  right: 3px;
+  height: 18px;
+  border-radius: 6px;
+}
+.room-tile.owned.edge-bottom .rt-owner-mark {
+  bottom: 5px;
+  left: 3px;
+  right: 3px;
+  height: 18px;
+  border-radius: 6px;
+}
+.room-tile.owned.edge-left .rt-owner-mark {
+  left: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 18px;
+  border-radius: 999px;
+}
+.room-tile.owned.edge-right .rt-owner-mark {
+  right: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 18px;
+  border-radius: 999px;
+}
+
+/* Keep tokens/houses above the ownership mark when needed. */
+.room-tile .rt-houses,
+.room-tile .rt-tokens {
+  z-index: 8;
+}
+
+/* =====================================================================
+   V12 — selected player colour, directional faces, separated side prices
+   ===================================================================== */
+
+/* The selected colour fills the character itself. A soft highlight keeps
+   dark colours readable without replacing them with the old yellow body. */
+.player-face,
+.room-player-avatar.player-face,
+.g-avatar.player-face,
+.g-token.face-token {
+  background:
+    radial-gradient(circle at 34% 27%, rgba(255,255,255,.58) 0 8%, transparent 25%),
+    radial-gradient(circle at 40% 34%,
+      color-mix(in srgb, var(--player-color) 72%, white 28%) 0%,
+      var(--player-color) 68%,
+      color-mix(in srgb, var(--player-color) 76%, black 24%) 100%) !important;
+  border-color: color-mix(in srgb, var(--player-color) 55%, white 45%) !important;
+}
+
+/* Lobby/sidebar characters use their two pseudo-elements as eyes. The eye
+   pair moves to the leading edge, so the whole character visibly faces the
+   selected direction instead of only shifting tiny pupils. */
+.player-face::before,
+.room-player-avatar.player-face::before,
+.g-avatar.player-face::before,
+.player-face::after,
+.room-player-avatar.player-face::after,
+.g-avatar.player-face::after {
+  width: 31% !important;
+  height: 31% !important;
+  border: 1px solid rgba(20,25,31,.55);
+  background: radial-gradient(circle at 50% 50%, #1b2026 0 23%, #fff 28% 100%) !important;
+  z-index: 4;
+}
+.player-face[data-look="right"]::before,
+.room-player-avatar.player-face[data-look="right"]::before,
+.g-avatar.player-face[data-look="right"]::before {
+  left: auto !important; right: -3% !important; top: 15% !important;
+}
+.player-face[data-look="right"]::after,
+.room-player-avatar.player-face[data-look="right"]::after,
+.g-avatar.player-face[data-look="right"]::after {
+  left: auto !important; right: -3% !important; top: 54% !important;
+}
+.player-face[data-look="left"]::before,
+.room-player-avatar.player-face[data-look="left"]::before,
+.g-avatar.player-face[data-look="left"]::before {
+  left: -3% !important; right: auto !important; top: 15% !important;
+}
+.player-face[data-look="left"]::after,
+.room-player-avatar.player-face[data-look="left"]::after,
+.g-avatar.player-face[data-look="left"]::after {
+  left: -3% !important; right: auto !important; top: 54% !important;
+}
+.player-face[data-look="up"]::before,
+.room-player-avatar.player-face[data-look="up"]::before,
+.g-avatar.player-face[data-look="up"]::before {
+  left: 15% !important; right: auto !important; top: -3% !important;
+}
+.player-face[data-look="up"]::after,
+.room-player-avatar.player-face[data-look="up"]::after,
+.g-avatar.player-face[data-look="up"]::after {
+  left: 54% !important; right: auto !important; top: -3% !important;
+}
+.player-face[data-look="down"]::before,
+.room-player-avatar.player-face[data-look="down"]::before,
+.g-avatar.player-face[data-look="down"]::before {
+  left: 15% !important; right: auto !important; top: 72% !important;
+}
+.player-face[data-look="down"]::after,
+.room-player-avatar.player-face[data-look="down"]::after,
+.g-avatar.player-face[data-look="down"]::after {
+  left: 54% !important; right: auto !important; top: 72% !important;
+}
+
+/* Board-token eyes use the real child element, leaving ::before/::after free
+   for the existing flight trail. */
+.g-token.face-token .token-face-eyes::before,
+.g-token.face-token .token-face-eyes::after {
+  width: 31% !important;
+  height: 31% !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  border: 1px solid rgba(20,25,31,.55);
+  background: radial-gradient(circle at 50% 50%, #1b2026 0 23%, #fff 28% 100%) !important;
+  box-sizing: border-box;
+}
+.g-token.face-token[data-look="right"] .token-face-eyes::before { right:-3% !important; top:15% !important; }
+.g-token.face-token[data-look="right"] .token-face-eyes::after  { right:-3% !important; top:54% !important; }
+.g-token.face-token[data-look="left"] .token-face-eyes::before  { left:-3% !important; top:15% !important; }
+.g-token.face-token[data-look="left"] .token-face-eyes::after   { left:-3% !important; top:54% !important; }
+.g-token.face-token[data-look="up"] .token-face-eyes::before    { left:15% !important; top:-3% !important; }
+.g-token.face-token[data-look="up"] .token-face-eyes::after     { left:54% !important; top:-3% !important; }
+.g-token.face-token[data-look="down"] .token-face-eyes::before  { left:15% !important; bottom:-3% !important; }
+.g-token.face-token[data-look="down"] .token-face-eyes::after   { left:54% !important; bottom:-3% !important; }
+
+/* Side-city text and price previously occupied the exact same x-coordinate.
+   Give each one a fixed lane: price outside, name in the middle, flag inside. */
+.room-tile.land-city.edge-left,
+.room-tile.land-city.edge-right {
+  display: block !important;
+  writing-mode: horizontal-tb !important;
+  padding: 0 !important;
+}
+.room-tile.land-city.edge-left .rt-name,
+.room-tile.land-city.edge-right .rt-name,
+.room-tile.land-city.edge-left .rt-price,
+.room-tile.land-city.edge-right .rt-price {
+  position: absolute !important;
+  top: 50% !important;
+  margin: 0 !important;
+  writing-mode: vertical-rl !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+}
+.room-tile.land-city.edge-right .rt-price {
+  right: 2px !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+}
+.room-tile.land-city.edge-left .rt-price {
+  left: 2px !important;
+  right: auto !important;
+  transform: translateY(-50%) !important;
+}
+/* Names read top-to-bottom (letters tilted a consistent direction) and are
+   sized to stay legible on the ~50px side tiles, like the reference board. */
+.room-tile.land-city.edge-right .rt-name {
+  left: 47% !important;
+  right: auto !important;
+  transform: translate(-50%,-50%) !important;
+  font-size: clamp(8.5px, 0.72vw, 10.5px) !important;
+}
+.room-tile.land-city.edge-left .rt-name {
+  left: 53% !important;
+  right: auto !important;
+  transform: translate(-50%,-50%) !important;
+  font-size: clamp(8.5px, 0.72vw, 10.5px) !important;
+}
+.room-tile.land-city.edge-left .rt-price,
+.room-tile.land-city.edge-right .rt-price {
+  min-width: 13px;
+  padding: 3px 1px !important;
+  border-radius: 5px;
+  background: rgba(3,9,14,.46);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+  color: #e8f5fb !important;
+  z-index: 12;
+}
+
+/* Ownership hides the price visually but preserves its flex slot so the
+   replacement claimed bar never sits on top of the land name. */
+.room-tile.owned .rt-price {
+  display: block !important;
+  visibility: hidden !important;
+}
+
+/* Row specials have a shorter price slot than cities; nudge their label away
+   from the wider claimed bar while keeping the icon comfortably inside. */
+.room-tile.owned.edge-top.row-special .rt-name {
+  transform: translateY(3px) !important;
+}
+.room-tile.owned.edge-bottom.row-special .rt-name {
+  transform: translateY(-3px) !important;
+}
+
+/* Long special-space names used to be forced into a 48px unbroken line,
+   even when a live game shrank the side tile below 48px. Wrap at the word
+   boundary and keep all three lanes (price / name / icon) visibly separate. */
+.room-tile.side-special .rt-name,
+.room-tile.side-special.edge-left .rt-name,
+.room-tile.side-special.edge-right .rt-name {
+  width: 58px !important;
+  max-width: 58px !important;
+  font-size: clamp(7.6px, 0.66vw, 9.4px) !important;
+  line-height: 1 !important;
+  letter-spacing: -.1px !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+.room-tile.side-special.edge-left .rt-name {
+  left: 50% !important;
+}
+.room-tile.side-special.edge-right .rt-name {
+  left: 50% !important;
+}
+.room-tile.side-special .rt-price {
+  min-width: 13px;
+  padding: 2px 1px !important;
+  border-radius: 5px;
+  background: rgba(3,9,14,.46);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+  color: #e8f5fb !important;
+  box-sizing: border-box;
+  z-index: 12;
+}
+
+/* ==========================================================================
+   SIDE-COLUMN NAME READABILITY (final override)
+   --------------------------------------------------------------------------
+   Unify every side-tile name (cities + specials) onto one consistent,
+   readable vertical rendering. City names previously read fine (vertical-rl);
+   special names were a tiny nowrap line that clipped on the short side tiles.
+   Now: vertical top-to-bottom, larger, and long names wrap onto 2 lines so
+   nothing gets cut off. Price stays on the outer edge, flag on the inner edge.
+   ========================================================================== */
+.room-tile.edge-left .rt-name,
+.room-tile.edge-right .rt-name,
+.room-tile.side-special.edge-left .rt-name,
+.room-tile.side-special.edge-right .rt-name {
+  writing-mode: vertical-rl !important;
+  text-orientation: mixed !important;
+  direction: ltr !important;
+  position: absolute !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  left: 50% !important;
+  right: auto !important;
+  margin: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+  max-height: 46px !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  overflow: visible !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  color: #f7faff !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.82) !important;
+  z-index: 6 !important;
+}
+/* Cities: single line, a touch larger for clarity. */
+.room-tile.land-city.edge-left .rt-name,
+.room-tile.land-city.edge-right .rt-name {
+  font-size: 10.5px !important;
+}
+/* Specials: auto-shrink so two-word names wrap cleanly instead of clipping. */
+.room-tile.side-special.edge-left .rt-name,
+.room-tile.side-special.edge-right .rt-name {
+  font-size: clamp(7.6px, 0.66vw, 9.4px) !important;
+  max-height: 50px !important;
+}
+
+/* --- Top/bottom rows: break names only at word boundaries, never mid-word.
+      Single long names stay on one line (paint over the gap as in the
+      reference), multi-word names wrap cleanly at the space. ----------------- */
+.room-tile.edge-top .rt-name,
+.room-tile.edge-bottom .rt-name,
+.room-tile.edge-top.row-special .rt-name,
+.room-tile.edge-bottom.row-special .rt-name,
+.room-tile.edge-top.land-city .rt-name,
+.room-tile.edge-bottom.land-city .rt-name {
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+/* Multi-word row names wrap at the space; keep the gap reasonable. */
+.room-tile.row-special .rt-name {
+  line-height: 1.05 !important;
+}
+
+/* ==========================================================================
+   SIDE (LEFT/RIGHT) PRICES — vertical glossy pills (reference style)
+   --------------------------------------------------------------------------
+   The reference board keeps side-column prices ROTATED (vertical, read by
+   tilting the head) inside a glossy rounded pill, so they align with the
+   rotated side-city names. Nudge the pill down a touch so it sits beside the
+   name instead of on top of it, and match the glossy look of the row pills.
+   ========================================================================== */
+.room-tile.land-city.edge-left .rt-price,
+.room-tile.land-city.edge-right .rt-price,
+.room-tile.side-special.edge-left .rt-price,
+.room-tile.side-special.edge-right .rt-price {
+  writing-mode: vertical-rl !important;
+  text-orientation: mixed !important;
+  direction: ltr !important;
+  position: absolute !important;
+  top: 62% !important;
+  min-width: 0 !important;
+  width: auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 5px 3px !important;
+  border-radius: 6px !important;
+  background: linear-gradient(180deg, rgba(126,145,166,.9), rgba(88,101,120,.78)) !important;
+  border: 1px solid rgba(255,255,255,.13) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 1px 2px rgba(0,0,0,.4) !important;
+  color: #eef6fb !important;
+  font-size: 8.6px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+}
+.room-tile.land-city.edge-left .rt-price,
+.room-tile.side-special.edge-left .rt-price {
+  left: 5px !important;
+  right: auto !important;
+  transform: translateY(-50%) !important;
+}
+.room-tile.land-city.edge-right .rt-price,
+.room-tile.side-special.edge-right .rt-price {
+  right: 5px !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+}
+
+/* ==========================================================================
+   PUSH PRICES OUTWARD (free the tile centre for player tokens)
+   --------------------------------------------------------------------------
+   Every price must sit toward the OUTER edge of the board, away from the
+   centre, so the inner part of each tile stays clear for the player's token.
+     top    -> price moves further UP
+     bottom -> price moves further DOWN
+     right  -> price moves further RIGHT
+     left   -> price moves further LEFT
+   ========================================================================== */
+
+/* TOP row: hug the top edge */
+.room-tile.edge-top.land-city .rt-price,
+.room-tile.edge-top.row-special .rt-price {
+  position: absolute !important;
+  top: 7px !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+}
+
+/* BOTTOM row: hug the bottom edge */
+.room-tile.edge-bottom.land-city .rt-price,
+.room-tile.edge-bottom.row-special .rt-price {
+  position: absolute !important;
+  bottom: 7px !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+}
+
+/* LEFT column: push further LEFT (outer edge) */
+.room-tile.land-city.edge-left .rt-price,
+.room-tile.side-special.edge-left .rt-price {
+  left: 1px !important;
+  right: auto !important;
+}
+
+/* RIGHT column: push further RIGHT (outer edge) */
+.room-tile.land-city.edge-right .rt-price,
+.room-tile.side-special.edge-right .rt-price {
+  right: 1px !important;
+  left: auto !important;
+}
+
+/* Keep the name clear of the outward-pushed price on the top/bottom rows so
+   the two never overlap and the tile centre stays open for the token. */
+.room-tile.edge-top.land-city .rt-name,
+.room-tile.edge-top.row-special .rt-name {
+  position: absolute !important;
+  top: 60% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  max-width: 88% !important;
+  margin: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+.room-tile.edge-bottom.land-city .rt-name,
+.room-tile.edge-bottom.row-special .rt-name {
+  position: absolute !important;
+  top: 42% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  max-width: 88% !important;
+  margin: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+/* Bottom-row specials also carry an icon; nudge it just above the name. */
+.room-tile.edge-bottom.row-special .rt-icon {
+  top: 18% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+}
+.room-tile.edge-top.row-special .rt-icon {
+  top: 30% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+}
+
+/* Row-special (Treasure / Tax / Airport / Death Valley / Surprise / Company)
+   tiles on the TOP & BOTTOM rows: layer price at the OUTER edge, then the
+   icon, then the name, so nothing overlaps and the centre stays open. */
+.room-tile.edge-top.row-special .rt-price,
+.room-tile.edge-bottom.row-special .rt-price,
+.room-tile.edge-top.row-special .rt-icon,
+.room-tile.edge-bottom.row-special .rt-icon,
+.room-tile.edge-top.row-special .rt-name,
+.room-tile.edge-bottom.row-special .rt-name {
+  position: absolute !important;
+  left: 50% !important;
+  right: auto !important;
+  margin: 0 !important;
+  transform: translateX(-50%) !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  text-align: center !important;
+}
+/* TOP row (price outermost/top) */
+.room-tile.edge-top.row-special .rt-price { top: 5px !important; }
+.room-tile.edge-top.row-special .rt-icon  { top: 24% !important; }
+.room-tile.edge-top.row-special .rt-name  { top: 62% !important; }
+/* BOTTOM row (price outermost/bottom) */
+.room-tile.edge-bottom.row-special .rt-icon  { top: 18% !important; }
+.room-tile.edge-bottom.row-special .rt-name  { top: 45% !important; }
+.room-tile.edge-bottom.row-special .rt-price { bottom: 5px !important; top: auto !important; }
+.room-tile.edge-top.row-special .rt-price {
+  width: auto !important;
+  min-width: 0 !important;
+}
