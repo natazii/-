@@ -1,0 +1,14 @@
+{
+  "name": "ma7fofa-edited-by-raed",
+  "version": "23.0.0",
+  "private": true,
+  "description": "Ma7fofa edited by Raed — static board game with reference lobby panels",
+  "scripts": {
+    "start": "python3 scripts/serve.py",
+    "test": "node --test tests/settings-engine.test.cjs",
+    "test:ui": "node tests/lobby.browser.cjs && node tests/sidebar.browser.cjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
+}
