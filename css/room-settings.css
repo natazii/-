@@ -1,0 +1,341 @@
+/* Lobby settings replacement — reference measurements, without changing board tiles.
+   Desktop: 16px gutters; 102px host card (81px in a wide sidebar); 48×24px switches;
+   56×28px player select; 84×28px cash select; 16px labels / 14px descriptions.
+   Icons and fonts are local: no CDN or icon-font dependency. */
+@font-face {
+  font-family: "Room Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/roboto-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Room Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../assets/fonts/roboto-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Room Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/roboto-latin-700-normal.woff2") format("woff2");
+}
+
+.room-icon-definitions { position: absolute; overflow: hidden; pointer-events: none; }
+.room-icon { display: inline-block; width: 20px; height: 16px; fill: currentColor; flex: 0 0 auto; }
+
+.lobby-screen {
+  --lobby-chrome: 32px;
+  padding: 16px;
+  background: #07091d;
+}
+.lobby-grid {
+  /* Equal sidebars around the existing square board. Keep at least 320px for
+     readable settings before switching to the two-column tablet layout. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, min(745px, calc(100vh - 32px), calc(100vw - 704px))) minmax(0, 1fr);
+  gap: 16px;
+}
+.lobby-middle { align-items: flex-start; }
+.lobby-board-wrap { align-items: flex-start; }
+.lobby-side.right { container-type: inline-size; }
+.lobby-right-stack {
+  --room-panel: #21233b;
+  --room-inner: #16172b;
+  --room-text: #f0edf5;
+  --room-muted: #bfc1f0;
+  --room-heading: #888bcf;
+  --room-icon: #8591bb;
+  --room-control: #2f3050;
+  --room-accent: #333679;
+  --room-line: #2b2f6e;
+  gap: 16px;
+  font-family: "Room Roboto", Arial, sans-serif;
+  direction: ltr;
+  text-align: left;
+}
+.lobby-right-stack .room-player-card,
+.lobby-right-stack .room-settings {
+  background: var(--room-panel);
+  border: 0;
+  border-radius: 7px;
+  box-shadow: none;
+}
+
+/* One host row, not the previous Players header / counters / Add bot block. */
+.room-player-card { flex: 0 0 auto; padding: 14px; max-height: 45%; overflow-y: auto; }
+.room-players-list { display: flex; flex-direction: column; gap: 8px; }
+.room-player-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 74px;
+  padding: 10px;
+  background: var(--room-inner);
+  border-radius: 3px;
+}
+.room-player-avatar {
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: none;
+}
+.room-player-avatar svg { width: 100%; height: 100%; display: block; }
+.room-player-info { display: flex; flex-wrap: wrap; align-items: center; flex: 1; min-width: 0; gap: 4px 12px; }
+.room-player-identity { display: flex; align-items: center; min-width: 0; max-width: 100%; gap: 5px; height: 24px; }
+.room-player-name { color: #fff; font-size: 14px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.room-host {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  padding: 2px 7px;
+  background: #2b2526;
+  color: #ffe396;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16px;
+}
+.room-host .room-icon { width: 15px; height: 15px; }
+.room-leave {
+  display: grid;
+  place-items: center;
+  flex: 0 0 29px;
+  width: 29px;
+  height: 24px;
+  padding: 0;
+  border-radius: 2px;
+  border: 2px solid #50689e;
+  color: #9ca9bd;
+  background: transparent;
+}
+.room-leave .room-icon { width: 19px; height: 18px; }
+.change-appearance {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 7px;
+  border: 2px solid #72a2c9;
+  border-radius: 2px;
+  background: transparent;
+  color: #fff;
+  font: 400 12px/20px "Room Roboto", Arial, sans-serif;
+  white-space: nowrap;
+}
+.change-appearance .room-icon { width: 13px; height: 13px; }
+.change-appearance:hover, .room-leave:hover { background: #6082ad; border-color: #6477b8; }
+.room-botbadge { border-radius: 3px; background: #6676aa; color: #7391be; font-size: 10px; padding: 2px 5px; }
+.kick-player { margin-left: auto; width: 24px; height: 24px; border-radius: 3px; background: transparent; color: #677ab1; }
+.kick-player:hover { background: #717db4; color: #fff; }
+.room-player-row:not(.is-host) { min-height: 52px; }
+@container (min-width: 440px) {
+  .room-player-row.is-host { min-height: 53px; }
+  .room-player-info { flex-wrap: nowrap; }
+  .change-appearance { margin-left: auto; }
+}
+
+/* The scrollbar has a 14px gutter and a 6px rounded thumb, inset 4px.
+   Reserving the gutter prevents the controls from jumping horizontally. */
+.room-settings {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  overscroll-behavior-y: contain;
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+  color: var(--room-text);
+  color-scheme: dark;
+}
+.room-settings::-webkit-scrollbar, .room-player-card::-webkit-scrollbar { width: 14px; }
+.room-settings::-webkit-scrollbar-track, .room-player-card::-webkit-scrollbar-track { background: transparent; margin: 0; }
+.room-settings::-webkit-scrollbar-thumb, .room-player-card::-webkit-scrollbar-thumb {
+  background: #6b7db9;
+  background-clip: padding-box;
+  border: 4px solid transparent;
+  border-radius: 10px;
+  min-height: 32px;
+}
+@supports not selector(::-webkit-scrollbar) {
+  .room-settings, .room-player-card { scrollbar-width: thin; scrollbar-color: #6a6379 transparent; }
+}
+.room-settings-title {
+  margin: 0 0 6px;
+  color: var(--room-heading);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18px;
+  text-align: center;
+}
+.room-setting {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+  border: 0;
+}
+.room-setting-icon { display: flex; align-items: center; justify-content: center; width: 20px; color: var(--room-icon); }
+.room-setting-copy { min-width: 0; }
+.room-setting-name { color: var(--room-text); font-size: 16px; font-weight: 500; line-height: 18px; }
+.room-setting-help { letter-spacing: -.03px; color: var(--room-muted); font-size: 14px; font-weight: 400; line-height: 14px; margin: 0; }
+.room-setting-name .beta {
+  display: inline-block;
+  vertical-align: 1px;
+  margin-left: 3px;
+  padding: 1px 3px;
+  color: #fff;
+  background: #69abe9;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 12px;
+}
+.room-toggle {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 24px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 12px;
+  background: var(--room-control);
+  transition: background-color 160ms ease;
+}
+.room-toggle::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 12%);
+  transition: transform 160ms ease;
+}
+.room-toggle.on { background: var(--room-accent); }
+.room-toggle.on::after { transform: translateX(24px); box-shadow: 0 2px 6px rgba(15, 21, 68, 0.4); }
+.room-toggle:hover { filter: brightness(1.1); }
+.room-select {
+  width: 56px;
+  min-width: 56px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  padding: 2px 22px 2px 12px;
+  color: #f7f5fc;
+  background: var(--room-control) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 4px center / 12px no-repeat;
+  appearance: none;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  cursor: pointer;
+}
+.room-select:hover { background-color: #555ba7; }
+.room-select-cash { width: 84px; min-width: 84px; padding-left: 11px; }
+.room-select option { color: #fff; background: #4e5491; }
+.room-link-btn { display: flex; flex-direction: column; align-items: flex-end; padding: 0; border: 0; background: transparent; color: var(--room-text); text-align: right; }
+.room-link-btn > span { font-size: 16px; font-weight: 500; line-height: 18px; }
+.room-link-btn small { display: flex; align-items: center; color: #5d76a5; font-size: 12px; font-weight: 500; line-height: 14px; white-space: nowrap; }
+.room-link-btn small .room-icon { width: 9px; height: 11px; }
+.room-link-btn:hover small { color: #aebafd; text-decoration: underline; }
+.settings-section-title {
+  margin: 12px 0 12px;
+  border-top: 1px solid var(--room-line);
+  padding-top: 24px;
+  color: var(--room-heading);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18px;
+  text-align: center;
+}
+.room-settings-footer { margin-top: 12px; border-top: 1px solid var(--room-line); padding-top: 12px; }
+.room-settings :is(button, select):focus-visible,
+.room-player-card button:focus-visible,
+.room-map-dialog button:focus-visible { outline: 2px solid #6d80bd; outline-offset: 4px; }
+.room-settings:focus-visible { outline: 2px solid #5b72c0; outline-offset: 2px; }
+.start-game:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Accessible native dialog: Escape, focus trap and focus restoration are provided by the browser. */
+.room-map-dialog {
+  width: min(420px, calc(100vw - 32px));
+  padding: 24px;
+  border: 1px solid #4e708f;
+  border-radius: 10px;
+  color: #f0edf5;
+  background: #3f537e;
+  box-shadow: 0 24px 90px #0009;
+  font: 400 14px/1.5 "Room Roboto", Arial, sans-serif;
+}
+.room-map-dialog::backdrop { background: #1c2541d9; }
+.room-map-header { display: flex; align-items: center; justify-content: space-between; }
+.room-map-header h2 { margin: 0; font-size: 20px; font-weight: 500; }
+.room-dialog-close { width: 28px; height: 28px; padding: 0; background: transparent; color: #6f7bb3; font-size: 25px; line-height: 28px; }
+.room-map-dialog p { color: #a99bbd; }
+.room-map-option { width: 100%; display: flex; align-items: center; gap: 14px; padding: 12px; background: #272c48; border: 1px solid #7879d4; border-radius: 7px; color: #f0edf5; text-align: left; }
+.room-map-preview { display: grid; grid-template-columns: repeat(13, 1fr); grid-template-rows: repeat(13, 1fr); width: 88px; height: 88px; gap: 1px; flex: 0 0 88px; background: #131b28; border-radius: 3px; padding: 2px; }
+.room-map-preview i { background: var(--map-color, #717db0); border-radius: 1px; }
+.room-map-details { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.room-map-details strong { font-size: 16px; font-weight: 500; }
+.room-map-details > span { color: #b1a3c9; font-size: 12px; }
+.room-map-option > .room-icon { color: #b0d0fa; width: 16px; }
+.room-map-note { font-size: 12px; }
+.room-dialog-done { width: 100%; padding: 10px 14px; background: #3a4c6d; color: #fff; border-radius: 6px; font-weight: 500; }
+.room-dialog-done:hover { background: #5873ed; }
+
+/* Tablet: board and settings remain side-by-side; chat moves below the board.
+   Mobile: show the board, then these controls, then chat — not tiny scaled text. */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .lobby-screen { height: auto; min-height: 100vh; }
+  .lobby-grid { grid-template-columns: minmax(0, 1fr) 360px; height: auto; align-items: start; }
+  .lobby-middle { grid-column: 1; grid-row: 1; }
+  .lobby-side.right { grid-column: 2; grid-row: 1 / span 2; height: calc(100vh - 32px); min-height: 560px; position: sticky; top: 16px; }
+  .lobby-side.left { grid-column: 1; grid-row: 2; }
+  .lobby-board-wrap { aspect-ratio: 1; height: auto; }
+  .lobby-chat { min-height: 220px; }
+}
+@media (max-width: 900px) {
+  .lobby-screen { height: auto; min-height: 100vh; padding: 16px; }
+  .lobby-grid { display: flex; flex-direction: column; gap: 16px; height: auto; }
+  .lobby-side.right { order: 2; width: 100%; max-width: 520px; align-self: center; }
+  .lobby-side.left { order: 3; width: 100%; max-width: 520px; align-self: center; }
+  .lobby-middle { order: 1; }
+  .lobby-right-stack { height: auto; }
+  .room-player-card { max-height: 280px; }
+  .room-settings { flex: none; max-height: min(680px, 80vh); overflow-y: auto; }
+  .lobby-board-wrap { height: auto; aspect-ratio: 1; }
+}
+@media (max-width: 380px) {
+  .lobby-screen { padding: 12px; }
+  .room-setting { gap: 10px; }
+  .room-setting-name { font-size: 15px; }
+  .room-player-row { padding: 10px 6px; gap: 10px; }
+  .room-player-card { padding: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .room-toggle, .room-toggle::after { transition: none; }
+}
+
+/* Used only when the new Auction rule is enabled, never in the lobby. */
+.g-auction { width: min(320px, 100%); padding: 16px; border-radius: 8px; background: #29203f; border: 1px solid #5a477b; color: #f0edf5; text-align: left; font: 400 14px/1.4 "Room Roboto", Arial, sans-serif; }
+.g-auction-heading { font-size: 16px; font-weight: 500; }
+.g-auction-status { color: #c1afd9; margin: 8px 0 12px; }
+.g-auction label { display: block; margin-bottom: 6px; font-size: 12px; }
+.g-auction label span { color: #b2a1c9; }
+.g-auction-bid-row { display: flex; gap: 8px; }
+.g-auction-bid-row input { width: 90px; min-width: 0; height: 36px; padding: 6px; border: 1px solid #77668f; border-radius: 5px; color: #fff; background: #3e3752; }
+.g-auction button { background: #6647e0; padding: 8px 12px; border-radius: 5px; color: #fff; font-size: 12px; }
+.g-auction .g-auction-pass { margin-top: 8px; background: #3e3752; }
+.g-auction :is(input, button):focus-visible { outline: 2px solid #d4beff; outline-offset: 2px; }

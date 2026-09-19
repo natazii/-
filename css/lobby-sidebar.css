@@ -1,0 +1,145 @@
+/* v23 — reference left sidebar. Settings/board styles remain unchanged.
+   Toolbar 32px · share card 101.4px · compact chat 316px · 16px gutters.
+   Hide the ad placeholder / expand chat for the tall layout in the close-up. */
+.lobby-side.left {
+  container-type: inline-size;
+  --sidebar-panel: #21233b;
+  --sidebar-input: #16172b;
+  --sidebar-composer: #16172b;
+  --sidebar-heading: #ffffff;
+  --sidebar-icon: #ffffff;
+  --sidebar-muted: #ffffff;
+  --sidebar-text: #f8f6fc;
+}
+.lobby-left-stack {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 16px;
+  direction: ltr;
+  font-family: "Room Roboto", Arial, sans-serif;
+}
+.sidebar-icon { display: block; width: 16px; height: 16px; flex: 0 0 auto; }
+.lobby-left-stack [hidden] { display: none !important; }
+.lobby-left-stack :is(button, input):focus-visible,
+.lobby-chat-messages:focus-visible,
+.sidebar-dialog button:focus-visible { outline: 2px solid #b2f6ff; outline-offset: 3px; }
+.lobby-left-stack button { -webkit-tap-highlight-color: transparent; }
+
+/* Same 32px toolbar footprint. The longer requested name remains readable,
+   and wraps to two compact lines only in narrow sidebars. */
+.lobby-tools { height: 32px; flex: 0 0 32px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.lobby-brand {
+  display: block;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 2px;
+  color: #fff;
+  text-align: left;
+  direction: ltr;
+  font: 700 clamp(18px, 6cqw, 28px)/32px "Room Roboto", Arial, sans-serif;
+  letter-spacing: -.65px;
+  white-space: nowrap;
+}
+.lobby-brand-main { color: #fff; }
+.lobby-brand-accent {
+  font-size: 0.78em;
+  font-weight: 500;
+  letter-spacing: normal;
+  color: #7dd3fc;
+  margin-left: 4px;
+}
+.lobby-brand:hover .lobby-brand-accent { color: #bae6fd; }
+.lobby-utilities { display: flex; align-items: center; justify-content: flex-end; flex: 0 0 auto; gap: 16px; }
+.lobby-tool { display: grid; place-items: center; width: 20px; height: 32px; padding: 0; border: 0; border-radius: 3px; color: var(--sidebar-icon); background: transparent; }
+.lobby-tool .sidebar-icon { width: 18px; height: 18px; }
+.lobby-tool:hover { color: #b5b8dc; }
+.lobby-tool[aria-pressed="true"] { color: #a0b2e5; }
+@container (max-width: 385px) {
+  .lobby-tools { gap: 10px; }
+  .lobby-brand { font-size: 18px; line-height: 16px; letter-spacing: -.45px; }
+  .lobby-brand-accent { display: block; }
+  .lobby-utilities { gap: 12px; }
+}
+
+.lobby-left-stack .lobby-card { background: var(--sidebar-panel); border: 0; border-radius: 7px; box-shadow: none; }
+.lobby-share { flex: 0 0 101.4px; height: 101.4px; padding: 16px; }
+.lobby-share-title { display: flex; align-items: center; justify-content: center; gap: 6px; height: 18px; margin: 0 0 15.4px; color: var(--sidebar-heading); font-size: 16px; font-weight: 500; line-height: 18px; }
+.share-info { display: grid; place-items: center; padding: 0; width: 16px; height: 18px; color: var(--sidebar-heading); background: transparent; border-radius: 50%; }
+.share-info:hover { color: #bbceea; }
+.lobby-share-row { display: grid; grid-template-columns: minmax(0, 1fr) 78px; gap: 8px; height: 36px; }
+.lobby-share-row input { min-width: 0; width: 100%; height: 36px; padding: 0 12px; border: 0; border-radius: 8px; color: var(--sidebar-text); background: var(--sidebar-input); font-size: 16px; font-weight: 500; line-height: 36px; text-overflow: ellipsis; direction: ltr; }
+.lobby-copy { display: flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 8px; border: 0; border-radius: 8px; color: var(--sidebar-text); background: var(--sidebar-input); font-size: 14px; font-weight: 700; white-space: nowrap; }
+.lobby-copy .sidebar-icon { width: 12px; height: 14px; }
+.lobby-copy:hover { background: #282a42; }
+.lobby-copy.is-copied { color: #bac0f7; gap: 5px; }
+
+/* This is an inert layout placeholder, not an ad integration or network request. */
+.lobby-ad-slot { position: relative; flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; color: #524b5d; font-size: 16px; line-height: 20px; }
+.lobby-ad-close { position: absolute; top: 0; right: 0; display: grid; place-items: center; width: 20px; height: 20px; padding: 0; background: transparent; color: #82788e; border-radius: 3px; }
+.lobby-ad-close .sidebar-icon { width: 14px; height: 14px; }
+.lobby-ad-close:hover { color: #b4c2d8; }
+
+/* The composer is a normal flex child, not an absolutely positioned overlay:
+   messages scroll independently and can never fall underneath the input. */
+.lobby-chat { display: flex; flex-direction: column; flex: 0 0 316px; min-height: 220px; min-width: 0; padding: 0; overflow: hidden; }
+.lobby-left-stack[data-chat-expanded="true"] .lobby-chat { flex: 1 1 0; }
+.lobby-chat-header { position: relative; flex: 0 0 48px; height: 48px; padding: 16px 16px 14px; }
+.lobby-chat-title { margin: 0; color: var(--sidebar-heading); text-align: center; font-size: 16px; font-weight: 500; line-height: 18px; }
+.lobby-chat-tools { position: absolute; top: 16px; left: 16px; display: flex; align-items: center; gap: 16px; }
+.chat-tool { display: grid; place-items: center; width: 20px; height: 18px; padding: 0; color: var(--sidebar-muted); background: transparent; border-radius: 2px; }
+.chat-tool .sidebar-icon { width: 14px; height: 14px; }
+.chat-tool:hover { color: #a0a1d1; }
+.chat-tool[aria-pressed="true"] { color: #a0acd1; }
+.lobby-chat-messages { flex: 1 1 0; min-height: 0; min-width: 0; margin: 0; padding: 16px; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; scrollbar-width: thin; scrollbar-color: #635970 transparent; font-size: 14px; }
+.lobby-chat-messages::-webkit-scrollbar { width: 6px; }
+.lobby-chat-messages::-webkit-scrollbar-thumb { background: #595f70; border-radius: 6px; }
+.lobby-chat-empty { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0; color: var(--sidebar-muted); font-size: 14px; font-weight: 400; line-height: 18px; }
+.lobby-chat-empty .sidebar-icon { width: 14px; height: 14px; }
+.chat-msg { padding: 7px 9px; margin-bottom: 7px; border-radius: 5px; color: #e4dceb; background: #16172b; line-height: 1.4; overflow-wrap: anywhere; white-space: pre-wrap; text-align: left; unicode-bidi: plaintext; }
+.chat-msg:last-child { margin-bottom: 0; }
+.chat-msg strong { color: #95b3eb; font-weight: 500; }
+.chat-msg.system { color: #7d95c9; background: transparent; font-size: 13px; font-style: normal; padding: 5px 0; }
+.lobby-chat-form { position: static; flex: 0 0 73px; display: flex; gap: 16px; align-items: center; margin: 0; padding: 16px; border-top: 1px solid #516194; height: 73px; }
+.lobby-chat-form input { min-width: 0; width: 100%; height: 40px; padding: 0 16px; border: 0; border-radius: 22px; color: #f1edf7; background: var(--sidebar-composer); font-size: 16px; font-weight: 400; line-height: 40px; }
+.lobby-chat-form input::placeholder { color: #6f7aaf; opacity: 1; }
+.lobby-chat-form button { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; color: #b29ace; background: #16172b; }
+.lobby-chat-form button .sidebar-icon { width: 18px; height: 18px; }
+.lobby-chat-form button:disabled { color: #5b6ba1; background: #16172b; cursor: default; opacity: 1; }
+.lobby-chat-form button:hover:not(:disabled) { color: #fff; background: #565eac; }
+
+.sidebar-dialog { width: min(430px, calc(100vw - 32px)); padding: 24px; border: 1px solid #4f64a0; border-radius: 10px; background: #07091d; color: #f0edf5; box-shadow: 0 24px 90px #0009; font: 400 14px/1.55 "Room Roboto", Arial, sans-serif; }
+.sidebar-dialog::backdrop { background: #07091d; }
+.sidebar-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.sidebar-dialog h2 { margin: 0; font-size: 20px; line-height: 24px; font-weight: 500; }
+.sidebar-dialog form { margin: 0; }
+.sidebar-dialog-close { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; background: transparent; color: #b7a6cc; border-radius: 3px; }
+.sidebar-dialog-close:hover { background: #07091d; color: #fff; }
+.sidebar-dialog-note { color: #6f76b4; }
+.sidebar-help-steps { padding-left: 20px; }
+.sidebar-help-steps li { padding-left: 4px; margin: 10px 0; }
+.sidebar-dialog-done { width: 100%; padding: 10px 16px; margin-top: 8px; border-radius: 6px; background: #6d7dc7; color: #fff; font-weight: 500; }
+.sidebar-dialog-done:hover { background: #576a9e; }
+
+/* Rename the home-screen wordmark without overflowing its original frame.
+   Clip the pre-existing oversized decorative glow on narrow home screens. */
+#homePage { overflow-x: clip; }
+.title-frame[lang="en"] { max-width: calc(100vw - 32px); padding: 20px 28px 24px; }
+.title-frame[lang="en"] .logo-title { direction: ltr; font-family: "Room Roboto", Arial, sans-serif; font-size: clamp(27px, 4.4vw, 48px); line-height: 1.08; letter-spacing: -1.2px; }
+.title-frame[lang="en"] .logo-title span { display: block; font-size: 0.70em; font-weight: 500; color: #7dd3fc; margin-top: 4px; }
+
+@media (max-width: 1200px) {
+  .lobby-side.left { height: min(748px, calc(100svh - 32px)); min-height: 520px; }
+}
+@media (min-width: 1201px) and (max-height: 620px) {
+  .lobby-chat { flex-basis: 220px; }
+  .lobby-side.left { min-height: 430px; }
+  .lobby-screen { min-height: 462px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lobby-left-stack * { scroll-behavior: auto; transition: none; }
+}
